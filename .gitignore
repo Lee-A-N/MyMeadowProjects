@@ -5,3 +5,5 @@
 *.dll
 *.cache
 *.exe
+/Simon/SoloPong/obj
+/Simon/SoloPong/bin
