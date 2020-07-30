@@ -1,0 +1,61 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\lnayes\\Documents\\Meadow Projects\\HelloMeadow\\HelloMeadow\\HelloMeadow.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\lnayes\\Documents\\Meadow Projects\\HelloMeadow\\HelloMeadow\\HelloMeadow.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\lnayes\\Documents\\Meadow Projects\\HelloMeadow\\HelloMeadow\\HelloMeadow.csproj",
+        "projectName": "App",
+        "projectPath": "C:\\Users\\lnayes\\Documents\\Meadow Projects\\HelloMeadow\\HelloMeadow\\HelloMeadow.csproj",
+        "packagesPath": "C:\\Users\\lnayes\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\lnayes\\Documents\\Meadow Projects\\HelloMeadow\\HelloMeadow\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\lnayes\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net472"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net472": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net472": {
+          "dependencies": {
+            "Meadow.Foundation": {
+              "target": "Package",
+              "version": "[0.15.2, )"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.301\\RuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "win7-x86": {
+          "#import": []
+        }
+      }
+    }
+  }
+}

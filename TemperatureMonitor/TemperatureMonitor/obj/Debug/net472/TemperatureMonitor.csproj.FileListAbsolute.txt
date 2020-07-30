@@ -1,0 +1,17 @@
+C:\Users\lnayes\Documents\Meadow Projects\TemperatureMonitor\TemperatureMonitor\bin\Debug\net472\App.exe.config
+C:\Users\lnayes\Documents\Meadow Projects\TemperatureMonitor\TemperatureMonitor\bin\Debug\net472\App.exe
+C:\Users\lnayes\Documents\Meadow Projects\TemperatureMonitor\TemperatureMonitor\bin\Debug\net472\Meadow.dll
+C:\Users\lnayes\Documents\Meadow Projects\TemperatureMonitor\TemperatureMonitor\bin\Debug\net472\Meadow.Foundation.dll
+C:\Users\lnayes\Documents\Meadow Projects\TemperatureMonitor\TemperatureMonitor\bin\Debug\net472\System.Core.dll
+C:\Users\lnayes\Documents\Meadow Projects\TemperatureMonitor\TemperatureMonitor\bin\Debug\net472\System.dll
+C:\Users\lnayes\Documents\Meadow Projects\TemperatureMonitor\TemperatureMonitor\bin\Debug\net472\mscorlib.dll
+C:\Users\lnayes\Documents\Meadow Projects\TemperatureMonitor\TemperatureMonitor\obj\Debug\net472\TemperatureMonitor.csprojAssemblyReference.cache
+C:\Users\lnayes\Documents\Meadow Projects\TemperatureMonitor\TemperatureMonitor\obj\Debug\net472\TemperatureMonitor.AssemblyInfoInputs.cache
+C:\Users\lnayes\Documents\Meadow Projects\TemperatureMonitor\TemperatureMonitor\obj\Debug\net472\TemperatureMonitor.AssemblyInfo.cs
+C:\Users\lnayes\Documents\Meadow Projects\TemperatureMonitor\TemperatureMonitor\obj\Debug\net472\TemperatureMonitor.csproj.CopyComplete
+C:\Users\lnayes\Documents\Meadow Projects\TemperatureMonitor\TemperatureMonitor\bin\Debug\net472\App.pdb
+C:\Users\lnayes\Documents\Meadow Projects\TemperatureMonitor\TemperatureMonitor\bin\Debug\net472\GraphicsLibrary.dll
+C:\Users\lnayes\Documents\Meadow Projects\TemperatureMonitor\TemperatureMonitor\bin\Debug\net472\TftSpi.dll
+C:\Users\lnayes\Documents\Meadow Projects\TemperatureMonitor\TemperatureMonitor\obj\Debug\net472\TemperatureMonitor.csproj.CoreCompileInputs.cache
+C:\Users\lnayes\Documents\Meadow Projects\TemperatureMonitor\TemperatureMonitor\obj\Debug\net472\App.exe
+C:\Users\lnayes\Documents\Meadow Projects\TemperatureMonitor\TemperatureMonitor\obj\Debug\net472\App.pdb

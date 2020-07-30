@@ -1,0 +1,227 @@
+{
+  "version": 3,
+  "targets": {
+    ".NETFramework,Version=v4.7.2": {
+      "Meadow/0.15.0": {
+        "type": "package",
+        "dependencies": {
+          "WildernessLabs.Meadow.Assemblies": "0.2.0"
+        },
+        "compile": {
+          "lib/net472/Meadow.dll": {}
+        },
+        "runtime": {
+          "lib/net472/Meadow.dll": {}
+        }
+      },
+      "Meadow.Foundation/0.17.0": {
+        "type": "package",
+        "dependencies": {
+          "Meadow": "0.15.0"
+        },
+        "compile": {
+          "lib/net472/Meadow.Foundation.dll": {}
+        },
+        "runtime": {
+          "lib/net472/Meadow.Foundation.dll": {}
+        }
+      },
+      "Meadow.Foundation.ICs.IOExpanders.x74595/0.1.7": {
+        "type": "package",
+        "dependencies": {
+          "Meadow.Foundation": "0.17.0"
+        },
+        "compile": {
+          "lib/net472/x74595.dll": {}
+        },
+        "runtime": {
+          "lib/net472/x74595.dll": {}
+        }
+      },
+      "WildernessLabs.Meadow.Assemblies/0.2.0": {
+        "type": "package",
+        "compile": {
+          "lib/net45/System.Core.dll": {},
+          "lib/net45/System.dll": {},
+          "lib/net45/mscorlib.dll": {}
+        },
+        "runtime": {
+          "lib/net45/System.Core.dll": {},
+          "lib/net45/System.dll": {},
+          "lib/net45/mscorlib.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.7.2/win7-x86": {
+      "Meadow/0.15.0": {
+        "type": "package",
+        "dependencies": {
+          "WildernessLabs.Meadow.Assemblies": "0.2.0"
+        },
+        "compile": {
+          "lib/net472/Meadow.dll": {}
+        },
+        "runtime": {
+          "lib/net472/Meadow.dll": {}
+        }
+      },
+      "Meadow.Foundation/0.17.0": {
+        "type": "package",
+        "dependencies": {
+          "Meadow": "0.15.0"
+        },
+        "compile": {
+          "lib/net472/Meadow.Foundation.dll": {}
+        },
+        "runtime": {
+          "lib/net472/Meadow.Foundation.dll": {}
+        }
+      },
+      "Meadow.Foundation.ICs.IOExpanders.x74595/0.1.7": {
+        "type": "package",
+        "dependencies": {
+          "Meadow.Foundation": "0.17.0"
+        },
+        "compile": {
+          "lib/net472/x74595.dll": {}
+        },
+        "runtime": {
+          "lib/net472/x74595.dll": {}
+        }
+      },
+      "WildernessLabs.Meadow.Assemblies/0.2.0": {
+        "type": "package",
+        "compile": {
+          "lib/net45/System.Core.dll": {},
+          "lib/net45/System.dll": {},
+          "lib/net45/mscorlib.dll": {}
+        },
+        "runtime": {
+          "lib/net45/System.Core.dll": {},
+          "lib/net45/System.dll": {},
+          "lib/net45/mscorlib.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Meadow/0.15.0": {
+      "sha512": "xT4j9T8Ut8AWPwIKz+EJhrgAcWGI9Z897mXp4RdrWYs7cVcwO8BDXL5obL+4mb2SSRW5oKELrpYXQjaC+Awayg==",
+      "type": "package",
+      "path": "meadow/0.15.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net472/Meadow.dll",
+        "meadow.0.15.0.nupkg.sha512",
+        "meadow.nuspec"
+      ]
+    },
+    "Meadow.Foundation/0.17.0": {
+      "sha512": "8s9MZY5d6F9zZJeLXA70gw0PFZInaUT9cpd/5DHhpoRb9tuPNCU/9qNhymv0JPVlAN0qMoqEFNYhiMszeE1MUQ==",
+      "type": "package",
+      "path": "meadow.foundation/0.17.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net472/Meadow.Foundation.dll",
+        "meadow.foundation.0.17.0.nupkg.sha512",
+        "meadow.foundation.nuspec"
+      ]
+    },
+    "Meadow.Foundation.ICs.IOExpanders.x74595/0.1.7": {
+      "sha512": "8oxp0WTBrWMR76gVXT9hZsJqeqtdq38RVAKP2JXxiDkTdPDclhz3iCzTDp7sIEY9pYnCd9pe1ODIgN3R+sDoCA==",
+      "type": "package",
+      "path": "meadow.foundation.ics.ioexpanders.x74595/0.1.7",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net472/x74595.dll",
+        "meadow.foundation.ics.ioexpanders.x74595.0.1.7.nupkg.sha512",
+        "meadow.foundation.ics.ioexpanders.x74595.nuspec"
+      ]
+    },
+    "WildernessLabs.Meadow.Assemblies/0.2.0": {
+      "sha512": "6LDBWLUzCA5T1m1kSQgoe3YqDwt3Y6z7VgLHrBRg0ufz03NjLPaBT0naupaSuIpmPuQdqs8pdxvLYXlzB08cPg==",
+      "type": "package",
+      "path": "wildernesslabs.meadow.assemblies/0.2.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/System.Core.dll",
+        "lib/net45/System.dll",
+        "lib/net45/mscorlib.dll",
+        "wildernesslabs.meadow.assemblies.0.2.0.nupkg.sha512",
+        "wildernesslabs.meadow.assemblies.nuspec"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    ".NETFramework,Version=v4.7.2": [
+      "Meadow.Foundation >= 0.17.0",
+      "Meadow.Foundation.ICs.IOExpanders.x74595 >= 0.1.7"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\lnayes\\.nuget\\packages\\": {},
+    "C:\\Microsoft\\Xamarin\\NuGet\\": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Users\\lnayes\\Documents\\Meadow Projects\\SwitchesAndLeds\\SwitchesAndLeds\\MotorController.csproj",
+      "projectName": "App",
+      "projectPath": "C:\\Users\\lnayes\\Documents\\Meadow Projects\\SwitchesAndLeds\\SwitchesAndLeds\\MotorController.csproj",
+      "packagesPath": "C:\\Users\\lnayes\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\lnayes\\Documents\\Meadow Projects\\SwitchesAndLeds\\SwitchesAndLeds\\obj\\",
+      "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Microsoft\\Xamarin\\NuGet\\",
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+      ],
+      "configFilePaths": [
+        "C:\\Users\\lnayes\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net472"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net472": {
+          "projectReferences": {}
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net472": {
+        "dependencies": {
+          "Meadow.Foundation": {
+            "target": "Package",
+            "version": "[0.17.0, )"
+          },
+          "Meadow.Foundation.ICs.IOExpanders.x74595": {
+            "target": "Package",
+            "version": "[0.1.7, )"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.301\\RuntimeIdentifierGraph.json"
+      }
+    },
+    "runtimes": {
+      "win7-x86": {
+        "#import": []
+      }
+    }
+  }
+}

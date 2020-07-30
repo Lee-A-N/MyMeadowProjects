@@ -1,0 +1,17 @@
+C:\Users\lnayes\Documents\Meadow Projects\Simon\SoloPong\obj\Debug\net472\SoloPong.csprojAssemblyReference.cache
+C:\Users\lnayes\Documents\Meadow Projects\Simon\SoloPong\obj\Debug\net472\SoloPong.AssemblyInfoInputs.cache
+C:\Users\lnayes\Documents\Meadow Projects\Simon\SoloPong\obj\Debug\net472\SoloPong.AssemblyInfo.cs
+C:\Users\lnayes\Documents\Meadow Projects\Simon\SoloPong\obj\Debug\net472\SoloPong.csproj.CoreCompileInputs.cache
+C:\Users\lnayes\Documents\Meadow Projects\Simon\SoloPong\bin\Debug\net472\App.exe.config
+C:\Users\lnayes\Documents\Meadow Projects\Simon\SoloPong\bin\Debug\net472\App.exe
+C:\Users\lnayes\Documents\Meadow Projects\Simon\SoloPong\bin\Debug\net472\Meadow.dll
+C:\Users\lnayes\Documents\Meadow Projects\Simon\SoloPong\bin\Debug\net472\Meadow.Foundation.dll
+C:\Users\lnayes\Documents\Meadow Projects\Simon\SoloPong\bin\Debug\net472\System.Core.dll
+C:\Users\lnayes\Documents\Meadow Projects\Simon\SoloPong\bin\Debug\net472\System.dll
+C:\Users\lnayes\Documents\Meadow Projects\Simon\SoloPong\bin\Debug\net472\mscorlib.dll
+C:\Users\lnayes\Documents\Meadow Projects\Simon\SoloPong\obj\Debug\net472\SoloPong.csproj.CopyComplete
+C:\Users\lnayes\Documents\Meadow Projects\Simon\SoloPong\bin\Debug\net472\App.pdb
+C:\Users\lnayes\Documents\Meadow Projects\Simon\SoloPong\bin\Debug\net472\GraphicsLibrary.dll
+C:\Users\lnayes\Documents\Meadow Projects\Simon\SoloPong\bin\Debug\net472\TftSpi.dll
+C:\Users\lnayes\Documents\Meadow Projects\Simon\SoloPong\obj\Debug\net472\App.exe
+C:\Users\lnayes\Documents\Meadow Projects\Simon\SoloPong\obj\Debug\net472\App.pdb

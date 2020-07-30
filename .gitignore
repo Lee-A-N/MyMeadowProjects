@@ -1,0 +1,7 @@
+/EdgeASketch/EdgeASketch/bin/Debug/net472/*.exe
+/EdgeASketch/EdgeASketch/bin/Debug/net472/*.pdb
+/EdgeASketch/EdgeASketch/bin/Debug/net472/*.dll
+/EdgeASketch/EdgeASketch/obj/Debug/net472/*.cache
+*.dll
+*.cache
+*.exe

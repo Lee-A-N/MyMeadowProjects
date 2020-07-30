@@ -1,0 +1,15 @@
+C:\Users\lnayes\Documents\Meadow Projects\HelloMeadow\HelloMeadow\bin\Debug\net472\App.exe.config
+C:\Users\lnayes\Documents\Meadow Projects\HelloMeadow\HelloMeadow\bin\Debug\net472\App.exe
+C:\Users\lnayes\Documents\Meadow Projects\HelloMeadow\HelloMeadow\bin\Debug\net472\App.pdb
+C:\Users\lnayes\Documents\Meadow Projects\HelloMeadow\HelloMeadow\bin\Debug\net472\Meadow.dll
+C:\Users\lnayes\Documents\Meadow Projects\HelloMeadow\HelloMeadow\bin\Debug\net472\Meadow.Foundation.dll
+C:\Users\lnayes\Documents\Meadow Projects\HelloMeadow\HelloMeadow\bin\Debug\net472\System.Core.dll
+C:\Users\lnayes\Documents\Meadow Projects\HelloMeadow\HelloMeadow\bin\Debug\net472\System.dll
+C:\Users\lnayes\Documents\Meadow Projects\HelloMeadow\HelloMeadow\bin\Debug\net472\mscorlib.dll
+C:\Users\lnayes\Documents\Meadow Projects\HelloMeadow\HelloMeadow\obj\Debug\net472\HelloMeadow.csprojAssemblyReference.cache
+C:\Users\lnayes\Documents\Meadow Projects\HelloMeadow\HelloMeadow\obj\Debug\net472\HelloMeadow.AssemblyInfoInputs.cache
+C:\Users\lnayes\Documents\Meadow Projects\HelloMeadow\HelloMeadow\obj\Debug\net472\HelloMeadow.AssemblyInfo.cs
+C:\Users\lnayes\Documents\Meadow Projects\HelloMeadow\HelloMeadow\obj\Debug\net472\HelloMeadow.csproj.CoreCompileInputs.cache
+C:\Users\lnayes\Documents\Meadow Projects\HelloMeadow\HelloMeadow\obj\Debug\net472\HelloMeadow.csproj.CopyComplete
+C:\Users\lnayes\Documents\Meadow Projects\HelloMeadow\HelloMeadow\obj\Debug\net472\App.exe
+C:\Users\lnayes\Documents\Meadow Projects\HelloMeadow\HelloMeadow\obj\Debug\net472\App.pdb
