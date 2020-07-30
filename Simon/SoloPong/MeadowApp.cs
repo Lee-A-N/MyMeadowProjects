@@ -17,14 +17,21 @@
     {
         private St7789 st7789;
 
-        public GraphicsLibrary Graphics { get; set; }
+        public GraphicsLibrary graphics;
+        private AsyncGraphics asyncGraphics;
 
         private Paddle paddle;
 
         private RotaryEncoderWithButton rotaryPaddle;
 
+        private int displayWidth;
+        private int displayHeight;
+
         private System.Timers.Timer debounceTimer = new System.Timers.Timer(500);
         private bool isDebounceActive = false;
+        public Color backgroundColor;
+
+        int directionCounter = 0;
 
         public MeadowApp()
         {
@@ -41,45 +48,42 @@
                 resetPin: Device.Pins.D00,
                 width: 240, height: 240
             );
-            this.DisplayWidth = Convert.ToInt32(this.st7789.Width);
-            this.DisplayHeight = Convert.ToInt32(this.st7789.Height);
+            this.displayWidth = Convert.ToInt32(this.st7789.Width);
+            this.displayHeight = Convert.ToInt32(this.st7789.Height);
 
-            this.Graphics = new GraphicsLibrary(this.st7789);
-            this.Graphics.Rotation = GraphicsLibrary.RotationType._270Degrees;
-
-            this.Graphics.Clear();
-            this.Graphics.Show();
+            this.graphics = new GraphicsLibrary(this.st7789);
+            this.graphics.Clear();
+            this.graphics.Rotation = GraphicsLibrary.RotationType._270Degrees;
+            this.graphics.Show();
+            this.asyncGraphics = new AsyncGraphics(this.graphics);
 
             this.debounceTimer.AutoReset = false;
             this.debounceTimer.Elapsed += DebounceTimer_Elapsed;
 
-            this.Background = Color.Blue;
+            this.backgroundColor = Color.Blue;
 
             this.LoadScreen();
 
-            this.paddle = new Paddle(this);
+            this.paddle = new Paddle(this.asyncGraphics, this.displayWidth, this.displayWidth, this.backgroundColor);
 
             this.rotaryPaddle = new RotaryEncoderWithButton(Device, Device.Pins.D10, Device.Pins.D09, Device.Pins.D08);
             this.rotaryPaddle.Rotated += RotaryPaddle_Rotated;
+
+            this.asyncGraphics.Start();
         }
-
-        public Color Background { get; set; }
-
-        public int DisplayWidth { get; set; }
-
-        public int DisplayHeight { get; set; }
 
         private void LoadScreen()
         {
-
-            this.Graphics.Stroke = 5;
-
-            this.Graphics.DrawRectangle(xLeft: 0, yTop: 0, width: this.DisplayWidth, height: this.DisplayHeight, color: this.Background, filled: true);
-
-            this.Graphics.Show();
+            this.graphics.Stroke = 5;
+            this.graphics.DrawRectangle(
+                xLeft: 0, 
+                yTop: 0,
+                width: this.displayWidth,
+                height: this.displayHeight, 
+                color: this.backgroundColor, 
+                filled: true);
+            this.graphics.Show();
         }
-
-        int directionCounter = 0;
 
         private void RotaryPaddle_Rotated(object sender, Meadow.Peripherals.Sensors.Rotary.RotaryTurnedEventArgs e)
         {
@@ -89,10 +93,6 @@
                 {
                     this.isDebounceActive = true;
                     this.debounceTimer.Start();
-
-                    //if (!this.isDebounceActive)
-                    //{
-                    //    this.isDebounceActive = true;
 
                     if (e.Direction == RotationDirection.Clockwise)
                     {
@@ -114,9 +114,6 @@
                             this.directionCounter = -1;
                         }
                     }
-
-                    //this.isDebounceActive = false;
-                    //}
                 }
             }
             catch (Exception ex)
