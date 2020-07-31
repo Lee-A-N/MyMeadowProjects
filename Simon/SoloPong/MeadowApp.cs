@@ -21,6 +21,7 @@
         private AsyncGraphics asyncGraphics;
 
         private Paddle paddle;
+        private Ball ball;
 
         private RotaryEncoderWithButton rotaryPaddle;
 
@@ -39,6 +40,10 @@
 
             var config = new SpiClockConfiguration(6000, SpiClockConfiguration.Mode.Mode3);
 
+            this.rotaryPaddle = new RotaryEncoderWithButton(Device, Device.Pins.D10, Device.Pins.D09, Device.Pins.D08);
+            this.rotaryPaddle.Rotated += RotaryPaddle_Rotated;
+            this.rotaryPaddle.Clicked += RotaryPaddle_Clicked;
+
             this.st7789 = new St7789(
                 device: Device,
                 spiBus: Device.CreateSpiBus(
@@ -48,6 +53,7 @@
                 resetPin: Device.Pins.D00,
                 width: 240, height: 240
             );
+
             this.displayWidth = Convert.ToInt32(this.st7789.Width);
             this.displayHeight = Convert.ToInt32(this.st7789.Height);
 
@@ -63,18 +69,27 @@
             this.backgroundColor = Color.Blue;
 
             this.LoadScreen();
+            this.asyncGraphics.ShowDirect();
 
             this.paddle = new Paddle(this.asyncGraphics, this.displayWidth, this.displayWidth, this.backgroundColor);
+            this.ball = new Ball(this.asyncGraphics, this.displayWidth, this.displayHeight, this.backgroundColor, this.paddle);
+        }
 
-            this.rotaryPaddle = new RotaryEncoderWithButton(Device, Device.Pins.D10, Device.Pins.D09, Device.Pins.D08);
-            this.rotaryPaddle.Rotated += RotaryPaddle_Rotated;
-
+        private void RotaryPaddle_Clicked(object sender, EventArgs e)
+        {
+            this.asyncGraphics.Stop();
+            this.ball.StopMoving();
+            this.LoadScreen();
+            this.paddle.Reset();
+            this.ball.Reset();
             this.asyncGraphics.Start();
+            this.ball.StartMoving();
         }
 
         private void LoadScreen()
         {
-            this.graphics.Stroke = 5;
+            this.graphics.Stroke = Paddle.HEIGHT;
+
             this.graphics.DrawRectangle(
                 xLeft: 0, 
                 yTop: 0,
@@ -82,7 +97,6 @@
                 height: this.displayHeight, 
                 color: this.backgroundColor, 
                 filled: true);
-            this.graphics.Show();
         }
 
         private void RotaryPaddle_Rotated(object sender, Meadow.Peripherals.Sensors.Rotary.RotaryTurnedEventArgs e)

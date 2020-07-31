@@ -1,29 +1,21 @@
 ﻿namespace SoloPong
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using System.Threading;
-    using Meadow;
-    using Meadow.Devices;
     using Meadow.Foundation;
-    using Meadow.Foundation.Displays.Tft;
     using Meadow.Foundation.Graphics;
-    using Meadow.Foundation.Sensors.Rotary;
-    using Meadow.Hardware;
-    using Meadow.Peripherals.Sensors.Rotary;
 
     public class AsyncGraphics
     {
         private GraphicsLibrary graphics;
         private Thread showThread;
-        private bool keepRunning = true;
+        private bool updateDisplay = false;
 
         public AsyncGraphics(GraphicsLibrary graphicsLibrary)
         {
             this.graphics = graphicsLibrary;
+
             this.showThread = new Thread(this.ShowLoop);
+            this.showThread.Start();
         }
 
         public void ShowDirect()
@@ -39,30 +31,45 @@
             }
         }
 
+        public void DrawRectangle(int x0, int y0, int width, int height, Color color)
+        {
+            lock (graphics)
+            {
+                this.graphics.DrawRectangle(x0, y0, width, height, color, true);
+            }
+        }
+
+        public void DrawCircle(int x, int y, int radius, Color color)
+        {
+            lock (graphics)
+            {
+                this.graphics.DrawCircle(x, y, radius, color, true);
+            }
+        }
+
         public void Start()
         {
-            this.showThread.Start();
+            this.updateDisplay = true;
         }
 
         public void Stop()
         {
-            this.keepRunning = false;
-            this.showThread.Join();
+            this.updateDisplay = false;
         }
 
         private void ShowLoop()
         {
-            while (this.keepRunning)
+            while (true)
             {
-                lock (this.graphics)
+                if (this.updateDisplay)
                 {
-                    if (keepRunning)
+                    lock (this.graphics)
                     {
                         this.graphics.Show();
                     }
                 }
 
-                Thread.Sleep(100);
+                Thread.Sleep(70);
             }
         }
     }
