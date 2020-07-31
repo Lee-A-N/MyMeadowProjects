@@ -79,13 +79,19 @@
 
                 if (delta > 0)
                 {
-                    this.Draw(oldPosition, oldPosition + delta, this.backgroundColor);
-                    this.Draw(right, right + delta, this.paddleColor);
+                    lock (this.asyncGraphics.LockObject)
+                    {
+                        this.Draw(oldPosition, oldPosition + delta, this.backgroundColor);
+                        this.Draw(right, right + delta, this.paddleColor);
+                    }
                 }
                 else if (delta < 0)
                 {
-                    this.Draw(right, right + delta, this.backgroundColor);
-                    this.Draw(oldPosition, newPosition, this.paddleColor);
+                    lock (this.asyncGraphics.LockObject)
+                    {
+                        this.Draw(right, right + delta, this.backgroundColor);
+                        this.Draw(oldPosition, newPosition, this.paddleColor);
+                    }
                 }
                 else
                 {

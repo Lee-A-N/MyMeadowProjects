@@ -4,35 +4,46 @@
     using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Timers;
+
     using Meadow;
     using Meadow.Devices;
     using Meadow.Foundation;
+    using Meadow.Foundation.Audio;
     using Meadow.Foundation.Displays.Tft;
     using Meadow.Foundation.Graphics;
     using Meadow.Foundation.Sensors.Rotary;
     using Meadow.Hardware;
     using Meadow.Peripherals.Sensors.Rotary;
 
-    public class MeadowApp : App<F7Micro, MeadowApp>
+    public class MeadowApp : App<F7Micro, MeadowApp>, ISounds
     {
+        private const float SILENT = 0;
+        private const float QUIET = 3;
+        private const float LOUD = 20;
+
         private St7789 st7789;
 
         public GraphicsLibrary graphics;
         private AsyncGraphics asyncGraphics;
 
-        private Paddle paddle;
-        private Ball ball;
-
         private RotaryEncoderWithButton rotaryPaddle;
+        private System.Timers.Timer paddleClickDebounceTimer = new System.Timers.Timer(500);
+        private bool isPaddleClickDebounceActive = false;
+
+        private PiezoSpeaker speaker;
+        private IPwmPort speakerPWM;
 
         private int displayWidth;
         private int displayHeight;
+        private Color backgroundColor;
 
         private System.Timers.Timer debounceTimer = new System.Timers.Timer(500);
         private bool isDebounceActive = false;
-        public Color backgroundColor;
 
         int directionCounter = 0;
+
+        private Paddle paddle;
+        private Ball ball;
 
         public MeadowApp()
         {
@@ -40,9 +51,15 @@
 
             var config = new SpiClockConfiguration(6000, SpiClockConfiguration.Mode.Mode3);
 
+            this.speakerPWM = Device.CreatePwmPort(Device.Pins.D07, dutyCycle: QUIET);
+            this.speaker = new PiezoSpeaker(speakerPWM);
+
             this.rotaryPaddle = new RotaryEncoderWithButton(Device, Device.Pins.D10, Device.Pins.D09, Device.Pins.D08);
             this.rotaryPaddle.Rotated += RotaryPaddle_Rotated;
             this.rotaryPaddle.Clicked += RotaryPaddle_Clicked;
+
+            this.paddleClickDebounceTimer.AutoReset = false;
+            this.paddleClickDebounceTimer.Elapsed += PaddleClickDebounceTimer_Elapsed;
 
             this.st7789 = new St7789(
                 device: Device,
@@ -72,18 +89,28 @@
             this.asyncGraphics.ShowDirect();
 
             this.paddle = new Paddle(this.asyncGraphics, this.displayWidth, this.displayWidth, this.backgroundColor);
-            this.ball = new Ball(this.asyncGraphics, this.displayWidth, this.displayHeight, this.backgroundColor, this.paddle);
+            this.ball = new Ball(this.asyncGraphics, this.displayWidth, this.displayHeight, this.backgroundColor, this.paddle, this);
+        }
+
+        private void PaddleClickDebounceTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            this.isPaddleClickDebounceActive = false;
         }
 
         private void RotaryPaddle_Clicked(object sender, EventArgs e)
         {
-            this.asyncGraphics.Stop();
-            this.ball.StopMoving();
-            this.LoadScreen();
-            this.paddle.Reset();
-            this.ball.Reset();
-            this.asyncGraphics.Start();
-            this.ball.StartMoving();
+            if (!this.isPaddleClickDebounceActive)
+            {
+                this.isPaddleClickDebounceActive = true;
+                this.asyncGraphics.Stop();
+                this.ball.StopMoving();
+                this.LoadScreen();
+                this.paddle.Reset();
+                this.ball.Reset();
+                this.PlayStartSound();
+                this.ball.StartMoving();
+                this.asyncGraphics.Start();
+            }
         }
 
         private void LoadScreen()
@@ -139,6 +166,57 @@
         private void DebounceTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             this.isDebounceActive = false;
+        }
+
+        void ISounds.PlayBorderHitSound()
+        {
+            new Thread(() =>
+            {
+                lock (this.speaker)
+                {
+                    this.speaker.PlayTone(1500, 30);
+                }
+            }).Start();
+        }
+
+        void ISounds.PlayPaddleHitSound()
+        {
+            new Thread(() =>
+            {
+                lock (this.speaker)
+                {
+                    this.speaker.PlayTone(750, 30);
+                }
+            }).Start();
+        }
+
+        void ISounds.PlayGameOverSound()
+        {
+            new Thread(() =>
+            {
+                lock (this.speaker)
+                {
+                    this.speaker.PlayTone(50, 500);
+                }
+            }).Start();
+        }
+
+        public void PlayStartSound()
+        {
+            new Thread(() =>
+            {
+                this.speaker.PlayTone(2000, 2);
+                Thread.Sleep(300);
+                this.speaker.PlayTone(2000, 2);
+            }).Start();
+        }
+
+        public void PlayBootSound()
+        {
+            new Thread(() =>
+            {
+                this.speaker.PlayTone(4000, 2);
+            }).Start();
         }
     }
 }

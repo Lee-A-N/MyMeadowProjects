@@ -18,6 +18,11 @@
             this.showThread.Start();
         }
 
+        public object LockObject
+        {
+            get { return this.graphics; }
+        }
+
         public void ShowDirect()
         {
             this.graphics.Show();
@@ -69,7 +74,7 @@
                     }
                 }
 
-                Thread.Sleep(70);
+                Thread.Sleep(50);
             }
         }
     }
