@@ -33,6 +33,9 @@
         private PiezoSpeaker speaker;
         private IPwmPort speakerPWM;
 
+        private IDigitalInputPort volumeIn1;
+        private IDigitalInputPort volumeIn2;
+
         private int displayWidth;
         private int displayHeight;
         private Color backgroundColor;
@@ -60,6 +63,9 @@
 
             this.paddleClickDebounceTimer.AutoReset = false;
             this.paddleClickDebounceTimer.Elapsed += PaddleClickDebounceTimer_Elapsed;
+
+            this.volumeIn1 = Device.CreateDigitalInputPort(Device.Pins.D03);
+            this.volumeIn2 = Device.CreateDigitalInputPort(Device.Pins.D04);
 
             this.st7789 = new St7789(
                 device: Device,
@@ -101,6 +107,7 @@
         {
             if (!this.isPaddleClickDebounceActive)
             {
+                this.paddleClickDebounceTimer.Start();
                 this.isPaddleClickDebounceActive = true;
                 this.asyncGraphics.Stop();
                 this.ball.StopMoving();
@@ -174,7 +181,7 @@
             {
                 lock (this.speaker)
                 {
-                    this.speaker.PlayTone(1500, 30);
+                    this.PlaySound(1500, 30);
                 }
             }).Start();
         }
@@ -185,7 +192,7 @@
             {
                 lock (this.speaker)
                 {
-                    this.speaker.PlayTone(750, 30);
+                    this.PlaySound(750, 30);
                 }
             }).Start();
         }
@@ -196,7 +203,7 @@
             {
                 lock (this.speaker)
                 {
-                    this.speaker.PlayTone(50, 500);
+                    this.PlaySound(50, 500);
                 }
             }).Start();
         }
@@ -205,9 +212,9 @@
         {
             new Thread(() =>
             {
-                this.speaker.PlayTone(2000, 2);
+                this.PlaySound(2000, 2);
                 Thread.Sleep(300);
-                this.speaker.PlayTone(2000, 2);
+                this.PlaySound(2000, 2);
             }).Start();
         }
 
@@ -215,8 +222,40 @@
         {
             new Thread(() =>
             {
-                this.speaker.PlayTone(4000, 2);
+                this.PlaySound(4000, 2);
             }).Start();
+        }
+
+        private int SoundDutyCycle
+        {
+            get
+            {
+                if (this.volumeIn1.State == true)
+                {
+                    // high
+                    return 20;
+                }
+                else if (this.volumeIn2.State == true)
+                {
+                    // mute
+                    return 0;
+                }
+                else
+                {
+                    // low
+                    return 1;
+                }
+            }
+        }
+
+        private void PlaySound(float frequency, int duration)
+        {
+            this.speakerPWM.DutyCycle = this.SoundDutyCycle;
+
+            if (this.SoundDutyCycle > 0)
+            {
+                this.speaker.PlayTone(frequency, duration);
+            }
         }
     }
 }

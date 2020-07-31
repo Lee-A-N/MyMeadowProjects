@@ -10,15 +10,15 @@
     {
         public const int HEIGHT = 3;
         private const int INCREMENT = 30;
+        private const int SHRINK_AMOUNT = 3;
 
         private readonly int displayWidth;
-        private readonly int width;
-        private readonly int maxRight;
         private readonly Color paddleColor = Color.White;
         private readonly Color backgroundColor;
         private readonly AsyncGraphics asyncGraphics; 
         private readonly int y;
 
+        private int width;
         private int position;
 
         public Paddle(AsyncGraphics asyncGraphics, int displayWidth, int displayHeight, Color backgroundColor)
@@ -26,15 +26,14 @@
             this.asyncGraphics = asyncGraphics;
 
             this.displayWidth = displayWidth;
-            this.width = displayWidth / 3;
             this.backgroundColor = backgroundColor;
-            this.maxRight = displayWidth - this.width;
             this.y = displayHeight - Paddle.HEIGHT / 2;
         }
 
         public void Reset()
         {
             this.position = this.displayWidth / 3;
+            this.width = displayWidth / 3;
 
             // draw the paddle in the starting position
             this.Draw(this.position, this.position + width, this.paddleColor);
@@ -50,14 +49,19 @@
             get { return this.position + this.width; }
         }
 
+        public int MaxRight
+        {
+            get { return this.displayWidth - this.width; }
+        }
+
         public void Move(int increment)
         {
             // calculate the new position
             int newPosition = this.position + increment;
 
-            if (newPosition > this.maxRight)
+            if (newPosition > this.MaxRight)
             {
-                newPosition = this.maxRight;
+                newPosition = this.MaxRight;
             }
             else if (newPosition < 0)
             {
@@ -72,7 +76,6 @@
             {
                 int right = this.position + this.width;
                 int delta = newPosition - this.position;
-                int drawDelta = delta / 3;
 
                 int oldPosition = this.position;
                 this.position = newPosition;
@@ -114,6 +117,16 @@
         public void MoveLeft()
         {
             this.Move(-Paddle.INCREMENT);
+        }
+
+        public void Shrink()
+        {
+            if (this.width > this.displayWidth / 24)
+            {
+                int oldRight = this.Right;
+                this.width -= Paddle.SHRINK_AMOUNT;
+                this.Draw(oldRight, this.Right, this.backgroundColor);
+            }
         }
     }
 }

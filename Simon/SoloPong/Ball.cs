@@ -10,7 +10,7 @@
 
     public class Ball
     {
-        private const int MOVE_INTERVAL = 250;
+        private const int MOVE_INTERVAL = 200;
 
         private readonly Color backgroundColor;
         private readonly int maxX;
@@ -131,6 +131,7 @@
                 {
                     this.speaker.PlayPaddleHitSound();
                     this.yIncrement = -this.yIncrement;
+                    this.paddle.Shrink();
                 }
                 else
                 {
