@@ -14,6 +14,9 @@
         {
             this.graphics = graphicsLibrary;
 
+            this.graphics.Stroke = Paddle.HEIGHT;
+            this.graphics.CurrentFont = new Font12x16();
+
             this.showThread = new Thread(this.ShowLoop);
             this.showThread.Start();
         }
@@ -26,6 +29,11 @@
         public void ShowDirect()
         {
             this.graphics.Show();
+        }
+
+        public void DrawText(string text, int x, int y, Color color)
+        {
+            this.graphics.DrawText(x, y, text, color);
         }
 
         public void DrawLine(int x0, int y0, int x1, int y1, Color color)

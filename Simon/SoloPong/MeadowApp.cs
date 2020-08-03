@@ -4,7 +4,7 @@
     using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Timers;
-
+    using System.Xml;
     using Meadow;
     using Meadow.Devices;
     using Meadow.Foundation;
@@ -50,6 +50,8 @@
 
         private Paddle paddle;
         private Ball ball;
+        private Banner instructionBanner;
+        private Banner scoreBanner;
 
         public MeadowApp()
         {
@@ -84,9 +86,8 @@
             this.displayHeight = Convert.ToInt32(this.st7789.Height);
 
             this.graphics = new GraphicsLibrary(this.st7789);
-            this.graphics.Clear();
             this.graphics.Rotation = GraphicsLibrary.RotationType._270Degrees;
-            this.graphics.Show();
+            this.graphics.Clear(updateDisplay: true);
             this.asyncGraphics = new AsyncGraphics(this.graphics);
 
             this.debounceTimer.AutoReset = false;
@@ -94,11 +95,15 @@
 
             this.backgroundColor = Color.Blue;
 
-            this.LoadScreen();
-            this.asyncGraphics.ShowDirect();
+            this.scoreBanner = new Banner(this.displayWidth, this.asyncGraphics, fontHeight: 16, this.backgroundColor, color: Color.Yellow, top: 0);
+            this.scoreBanner.Text = Banner.SCORE_TEXT;
+            this.instructionBanner = new Banner(this.displayWidth, this.asyncGraphics, fontHeight: 16, this.backgroundColor, color: Color.White, top: Banner.HEIGHT);
+            this.LoadScreen(eraseInstructionBanner: false, instructionBannerText: Banner.START_TEXT, showScoreBanner: false);
 
             this.paddle = new Paddle(this.asyncGraphics, this.displayWidth, this.displayWidth, this.backgroundColor);
-            this.ball = new Ball(this.asyncGraphics, this.displayWidth, this.displayHeight, this.backgroundColor, this.paddle, this);
+            this.ball = new Ball(this.asyncGraphics, this.displayWidth, this.displayHeight, this.backgroundColor, this.paddle, this, minimumY: Banner.HEIGHT + 1);
+            this.ball.ExplosionOccurred += this.OnExplosionOccurred;
+            this.ball.ScoreChanged += this.scoreBanner.OnScoreChanged;
         }
 
         private void PaddleClickDebounceTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -110,23 +115,30 @@
         {
             if (!this.isPaddleClickDebounceActive)
             {
+                Console.WriteLine("Processing knob click");
                 this.paddleClickDebounceTimer.Start();
                 this.isPaddleClickDebounceActive = true;
                 this.asyncGraphics.Stop();
                 this.ball.StopMoving();
-                this.LoadScreen();
+                this.LoadScreen(eraseInstructionBanner : true, string.Empty, showScoreBanner: true);
                 this.paddle.Reset();
                 this.ball.Reset();
                 this.PlayStartSound();
+                this.ball.Score = 0;
                 this.ball.StartMoving();
                 this.asyncGraphics.Start();
             }
         }
 
-        private void LoadScreen()
+        public void ShowInstructionBanner(string text)
         {
-            this.graphics.Stroke = Paddle.HEIGHT;
+            this.instructionBanner.Text = text;
+            this.instructionBanner.Draw();
+            this.asyncGraphics.ShowDirect();
+        }
 
+        private void LoadScreen(bool eraseInstructionBanner, string instructionBannerText, bool showScoreBanner)
+        {
             this.graphics.DrawRectangle(
                 xLeft: 0, 
                 yTop: 0,
@@ -134,6 +146,22 @@
                 height: this.displayHeight, 
                 color: this.backgroundColor, 
                 filled: true);
+
+            if (eraseInstructionBanner)
+            {
+                this.instructionBanner.Hide();
+            }
+            else
+            {
+                this.ShowInstructionBanner(instructionBannerText);
+            }
+
+            if (showScoreBanner)
+            {
+                this.scoreBanner.Draw();
+            }
+
+            this.asyncGraphics.ShowDirect();
         }
 
         private void RotaryPaddle_Rotated(object sender, Meadow.Peripherals.Sensors.Rotary.RotaryTurnedEventArgs e)
@@ -289,6 +317,11 @@
             {
                 this.speaker.PlayTone(frequency, this.GetSoundDuration(duration));
             }
+        }
+
+        private void OnExplosionOccurred(object sender, Ball.GameOverArgs args)
+        {
+            this.ShowInstructionBanner(Banner.RESTART_TEXT);
         }
     }
 }

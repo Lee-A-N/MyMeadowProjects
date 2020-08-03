@@ -10,11 +10,35 @@
 
     public class Ball
     {
+        public class GameOverArgs : EventArgs
+        {
+        }
+
+        public class ScoreChangedArgs : EventArgs
+        {
+            public ScoreChangedArgs(int oldScore, int newScore)
+            {
+                this.OldScore = oldScore;
+                this.Score = newScore;
+            }
+
+            public int OldScore { get; set; }
+
+            public int Score { get; set; }
+        }
+
+        public delegate void NotifyScoreChanged(object sender, ScoreChangedArgs args);
+        public event NotifyScoreChanged ScoreChanged;
+
+        public delegate void NotifyGameOver(object sender, GameOverArgs args);
+        public event NotifyGameOver ExplosionOccurred;
+
         private const int MOVE_INTERVAL = 200;
 
         private readonly Color backgroundColor;
         private readonly int maxX;
         private readonly int maxY;
+        private readonly int minY;
         private readonly AsyncGraphics asyncGraphics;
         private readonly System.Timers.Timer moveTimer = new System.Timers.Timer(Ball.MOVE_INTERVAL);
         private readonly Paddle paddle;
@@ -22,7 +46,7 @@
         private readonly ISounds speaker;
 
         private int xPosition = 5;
-        private int yPosition = 5;
+        private int yPosition;
         private int xIncrement;
         private int yIncrement;
 
@@ -32,7 +56,9 @@
 
         private Color color = Color.Red;
 
-        public Ball(AsyncGraphics asyncGraphics, int displayWidth, int displayHeight, Color backgroundColor, Paddle paddle, ISounds soundGenerator)
+        private int score = -1;
+
+        public Ball(AsyncGraphics asyncGraphics, int displayWidth, int displayHeight, Color backgroundColor, Paddle paddle, ISounds soundGenerator, int minimumY)
         {
             this.asyncGraphics = asyncGraphics;
             this.speaker = soundGenerator;
@@ -43,15 +69,35 @@
             this.displayWidth = displayWidth;
             this.maxX = displayWidth - this.width;
             this.maxY = displayHeight - this.height - Paddle.HEIGHT;
+            this.minY = minimumY;
+            this.yPosition = this.minY + 5;
  
             this.moveTimer.AutoReset = true;
             this.moveTimer.Elapsed += MoveTimer_Elapsed;
         }
 
+        public int Score
+        {
+            get
+            {
+                return this.score;
+            }
+
+            set
+            {
+                if (this.score != value)
+                {
+                    int oldScore = this.score;
+                    this.score = value;
+                    this.ScoreChanged?.Invoke(this, new ScoreChangedArgs(oldScore, this.score));
+                }
+            }
+        }
+
         public void Reset()
         {
             this.xPosition = this.random.Next(5, this.displayWidth - 5 - this.width);
-            this.yPosition = 5;
+            this.yPosition = this.minY + 5;
 
             this.xIncrement = 7;
             this.yIncrement = 13;
@@ -93,12 +139,12 @@
 
                 if (this.yPosition > this.maxY)
                 {
-                    this.yPosition = maxY;
+                    this.yPosition = this.maxY;
                 }
 
-                if (this.yPosition < 0)
+                if (this.yPosition < this.minY)
                 {
-                    this.yPosition = 0;
+                    this.yPosition = this.minY;
                 }
 
                 lock (this.asyncGraphics.LockObject)
@@ -119,7 +165,7 @@
                 this.xIncrement = -this.xIncrement;
             }
 
-            if (this.yPosition <= 0)
+            if (this.yPosition <= this.minY)
             {
                 this.speaker.PlayBorderHitSound();
                 this.yIncrement = -this.yIncrement;
@@ -130,6 +176,7 @@
                 if (this.xPosition >= this.paddle.Left && this.xPosition < this.paddle.Right)
                 {
                     this.speaker.PlayPaddleHitSound();
+                    ++this.Score;
                     this.yIncrement = -this.yIncrement;
                     this.paddle.Shrink();
                 }
@@ -169,6 +216,8 @@
 
                 radius *= 2;
             }
+
+            ExplosionOccurred?.Invoke(this, null);
         }
 
         private void Draw(int x, int y, Color color)
