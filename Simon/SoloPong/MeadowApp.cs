@@ -17,9 +17,12 @@
 
     public class MeadowApp : App<F7Micro, MeadowApp>, ISounds
     {
-        private const float SILENT = 0;
-        private const float QUIET = 3;
-        private const float LOUD = 20;
+        private enum SoundMode
+        {
+            Silent,
+            Soft,
+            Normal
+        }
 
         private St7789 st7789;
 
@@ -54,9 +57,6 @@
 
             var config = new SpiClockConfiguration(6000, SpiClockConfiguration.Mode.Mode3);
 
-            this.speakerPWM = Device.CreatePwmPort(Device.Pins.D07, dutyCycle: QUIET);
-            this.speaker = new PiezoSpeaker(speakerPWM);
-
             this.rotaryPaddle = new RotaryEncoderWithButton(Device, Device.Pins.D10, Device.Pins.D09, Device.Pins.D08);
             this.rotaryPaddle.Rotated += RotaryPaddle_Rotated;
             this.rotaryPaddle.Clicked += RotaryPaddle_Clicked;
@@ -66,6 +66,9 @@
 
             this.volumeIn1 = Device.CreateDigitalInputPort(Device.Pins.D03);
             this.volumeIn2 = Device.CreateDigitalInputPort(Device.Pins.D04);
+
+            this.speakerPWM = Device.CreatePwmPort(Device.Pins.D07, dutyCycle: this.SoundDutyCycle);
+            this.speaker = new PiezoSpeaker(speakerPWM);
 
             this.st7789 = new St7789(
                 device: Device,
@@ -224,13 +227,6 @@
             {
                 this.PlaySound(4000, 2);
             }).Start();
-        }
-
-        private enum SoundMode
-        {
-            Silent,
-            Soft,
-            Normal
         }
 
         private SoundMode SoundLevel
