@@ -226,25 +226,62 @@
             }).Start();
         }
 
-        private int SoundDutyCycle
+        private enum SoundMode
+        {
+            Silent,
+            Soft,
+            Normal
+        }
+
+        private SoundMode SoundLevel
         {
             get
             {
                 if (this.volumeIn1.State == true)
                 {
-                    // high
-                    return 20;
+                    return SoundMode.Normal;
                 }
                 else if (this.volumeIn2.State == true)
                 {
-                    // mute
-                    return 0;
+                    return SoundMode.Silent;
                 }
                 else
                 {
-                    // low
-                    return 1;
+                    return SoundMode.Soft;
                 }
+            }
+        }
+
+        private int SoundDutyCycle
+        {
+            get
+            {
+                switch (this.SoundLevel)
+                {
+                    case SoundMode.Silent:
+                        return 0;
+
+                    case SoundMode.Soft:
+                        return 1;
+
+                    default:
+                        return 20;
+                }
+            }
+        }
+
+        private int GetSoundDuration(int normalDuration)
+        {
+            switch (this.SoundLevel)
+            {
+                case SoundMode.Silent:
+                    return 0;
+
+                case SoundMode.Soft:
+                    return 1;
+
+                default:
+                    return normalDuration;
             }
         }
 
@@ -254,7 +291,7 @@
 
             if (this.SoundDutyCycle > 0)
             {
-                this.speaker.PlayTone(frequency, duration);
+                this.speaker.PlayTone(frequency, this.GetSoundDuration(duration));
             }
         }
     }
