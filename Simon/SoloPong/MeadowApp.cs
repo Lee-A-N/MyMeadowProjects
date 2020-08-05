@@ -235,20 +235,14 @@
 
         void ISounds.PlayGameOverSound()
         {
-            new Thread(() =>
-            {
-                    this.PlaySound(50, 500);
-            }).Start();
+            this.PlaySound(50, 500);
         }
 
         public void PlayStartSound()
         {
-            new Thread(() =>
-            {
-                this.PlaySound(2000, 2);
-                Thread.Sleep(10);
-                this.PlaySound(2000, 2);
-            }).Start();
+            this.PlaySound(2000, 2);
+            Thread.Sleep(10);
+            this.PlaySound(2000, 2);
         }
 
         public void PlayInaudibleSound()
