@@ -10,11 +10,11 @@
         public const string RESTART_TEXT = "Press to restart";
         public const string SCORE_TEXT = "SCORE: ";
 
-        private int width;
-        private int top;
-        private AsyncGraphics asyncGraphics;
-        private Color backgroundColor;
-        private Color color;
+        private readonly int width;
+        private readonly int top;
+        private readonly AsyncGraphics asyncGraphics;
+        private readonly Color backgroundColor;
+        private readonly Color color;
 
         public Banner(int displayWidth, AsyncGraphics graphics, int fontHeight, Color backgroundColor, Color color, int top)
         {

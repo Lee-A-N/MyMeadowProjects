@@ -102,7 +102,6 @@
 
         private void Draw(int left, int right, Color color)
         {
-            int x2 = left + this.Width;
             this.asyncGraphics.DrawLine(left, this.y, right, this.y, color);
         }
 

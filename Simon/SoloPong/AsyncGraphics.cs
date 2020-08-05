@@ -6,8 +6,8 @@
 
     public class AsyncGraphics
     {
-        private GraphicsLibrary graphics;
-        private Thread showThread;
+        private readonly GraphicsLibrary graphics;
+        private readonly Thread showThread;
         private bool updateDisplay = false;
 
         public AsyncGraphics(GraphicsLibrary graphicsLibrary)

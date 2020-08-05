@@ -83,8 +83,10 @@
             this.displayWidth = Convert.ToInt32(this.st7789.Width);
             this.displayHeight = Convert.ToInt32(this.st7789.Height);
 
-            this.graphics = new GraphicsLibrary(this.st7789);
-            this.graphics.Rotation = GraphicsLibrary.RotationType._270Degrees;
+            this.graphics = new GraphicsLibrary(this.st7789)
+            {
+                Rotation = GraphicsLibrary.RotationType._270Degrees
+            };
             this.graphics.Clear(updateDisplay: true);
             this.asyncGraphics = new AsyncGraphics(this.graphics);
 
@@ -93,8 +95,10 @@
 
             this.backgroundColor = Color.Blue;
 
-            this.scoreBanner = new Banner(this.displayWidth, this.asyncGraphics, fontHeight: 16, this.backgroundColor, color: Color.Yellow, top: 0);
-            this.scoreBanner.Text = Banner.SCORE_TEXT;
+            this.scoreBanner = new Banner(this.displayWidth, this.asyncGraphics, fontHeight: 16, this.backgroundColor, color: Color.Yellow, top: 0)
+            {
+                Text = Banner.SCORE_TEXT
+            };
             this.instructionBanner = new Banner(
                 displayWidth: this.displayWidth, 
                 graphics: this.asyncGraphics, 

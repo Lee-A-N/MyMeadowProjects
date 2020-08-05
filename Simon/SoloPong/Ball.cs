@@ -130,7 +130,7 @@
                 {
                     this.isMoveComplete = false;
 
-                    if (!this.checkForCollision())
+                    if (!this.CheckForCollision())
                     {
                         int oldX = this.xPosition;
                         int oldY = this.yPosition;
@@ -187,7 +187,7 @@
             }
             catch (Exception ex)
             {
-                MeadowApp.DebugWriteLine($"Exception in MoveTimer_Elapsed: {ex.ToString()}");
+                MeadowApp.DebugWriteLine($"Exception in MoveTimer_Elapsed: {ex}");
                 this.isMoveComplete = true;
             }
         }
@@ -277,7 +277,7 @@
             }
         }
 
-        private bool checkForCollision()
+        private bool CheckForCollision()
         {
             bool isPaddleMissed = false;
             bool isBorderHit = false;
@@ -294,9 +294,7 @@
                     this.speaker.PlayPaddleHitSound();
                     ++this.Score;
 
-                    int extraX;
-                    int extraY;
-                    this.GetVelocityChangeAdjustments(ballCenterX, out extraX, out extraY);
+                    this.GetVelocityChangeAdjustments(ballCenterX, out int extraX, out int extraY);
 
                     this.yIncrement = -this.yIncrement;
 
