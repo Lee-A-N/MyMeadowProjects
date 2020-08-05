@@ -134,9 +134,9 @@
 
                         this.xPosition += this.xIncrement;
 
-                        if (this.xPosition + this.width > this.maxX)
+                        if (this.xPosition > this.maxX)
                         {
-                            this.xPosition = maxX - this.width;
+                            this.xPosition = maxX;
                         }
 
                         MeadowApp.DebugWriteLine($"new x = {this.xPosition}");
@@ -150,9 +150,9 @@
 
                         MeadowApp.DebugWriteLine($"new y = {this.yPosition}");
 
-                        if (this.yPosition + this.height > this.maxY)
+                        if (this.yPosition > this.maxY)
                         {
-                            this.yPosition = this.maxY - this.height;
+                            this.yPosition = this.maxY;
                         }
 
                         if (this.yPosition < this.minY)
@@ -233,11 +233,10 @@
             bool isBorderHit = false;
 
             int ballCenterX = this.xPosition + this.width / 2;
-            int ballCenterY = this.yPosition + this.height / 2;
 
-            MeadowApp.DebugWriteLine($"checkForCollision: {ballCenterX},{ballCenterY}");
+            MeadowApp.DebugWriteLine($"checkForCollision: {ballCenterX},{this.yPosition}");
 
-            if (this.yPosition + this.height >= this.maxY)
+            if (this.yPosition >= this.maxY)
             {
                 if (ballCenterX >= this.paddle.Left && ballCenterX < this.paddle.Right)
                 {
@@ -261,7 +260,7 @@
             }
             else
             {
-                if (this.xPosition + this.width >= this.maxX || this.xPosition <= 0)
+                if (this.xPosition >= this.maxX || this.xPosition <= 0)
                 {
                     MeadowApp.DebugWriteLine("x border hit");
                     isBorderHit = true;

@@ -110,12 +110,12 @@
             this.ball.ScoreChanged += this.scoreBanner.OnScoreChanged;
 
             this.rotaryPaddle.Clicked += RotaryPaddle_Clicked;
-            this.PlayBootSound();
+            this.PlayConstructionCompleteSound();
         }
 
         public static void DebugWriteLine(string s)
         {
-            Console.WriteLine(s);
+            //Console.WriteLine(s);
         }
 
         private void RotaryPaddle_Clicked(object sender, EventArgs e)
@@ -259,11 +259,12 @@
             }).Start();
         }
 
-        public void PlayBootSound()
+        public void PlayConstructionCompleteSound()
         {
             new Thread(() =>
             {
-                this.PlaySound(1000, 1);
+                this.PlaySound(1200, 1);
+                this.PlaySound(1200, 1);
             }).Start();
         }
 
