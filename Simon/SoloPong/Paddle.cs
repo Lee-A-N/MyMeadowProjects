@@ -1,10 +1,6 @@
 ﻿namespace SoloPong
 {
-    using System;
-    using System.ComponentModel;
-    using System.Threading;
     using Meadow.Foundation;
-    using Meadow.Foundation.Graphics;
 
     public class Paddle
     {

@@ -68,7 +68,7 @@
 
             this.speakerPWM = Device.CreatePwmPort(Device.Pins.D07, frequency: 5, dutyCycle: this.SoundDutyCycle);
             this.speaker = new PiezoSpeaker(speakerPWM);
-            this.PlayInaudibleSound();
+            this.PlayInitialSound();
 
             this.st7789 = new St7789(
                 device: Device,
@@ -115,7 +115,7 @@
 
         public static void DebugWriteLine(string s)
         {
-            //Console.WriteLine(s);
+            Console.WriteLine(s);
         }
 
         private void RotaryPaddle_Clicked(object sender, EventArgs e)
@@ -219,23 +219,29 @@
 
         void ISounds.PlayBorderHitSound()
         {
-            new Thread(() =>
-            {
-                this.PlaySound(1500, 30);
-            }).Start();
+            this.PlaySound(1500, 10);
         }
 
         void ISounds.PlayPaddleHitSound()
         {
-            new Thread(() =>
-            {
-                    this.PlaySound(1400, 30);
-            }).Start();
+            this.PlaySound(1300, 10);
         }
 
         void ISounds.PlayGameOverSound()
         {
-            this.PlaySound(50, 500);
+            try
+            {
+                // A thread is needed to get the sound to play
+                new Thread(() =>
+                {
+                    this.PlaySound(50, 500);
+                }).Start();
+            }
+            catch (Exception)
+            {
+                // Sometimes thread creation fails. Make sure it doesn't crash the game.
+                MeadowApp.DebugWriteLine($"Exception in PlayGameOverSound");
+            }
         }
 
         public void PlayStartSound()
@@ -245,7 +251,7 @@
             this.PlaySound(2000, 2);
         }
 
-        public void PlayInaudibleSound()
+        public void PlayInitialSound()
         {
             new Thread(() =>
             {
@@ -320,7 +326,6 @@
             if (this.SoundDutyCycle > 0)
             {
                 this.speaker.PlayTone(frequency, this.GetSoundDuration(duration));
-                this.speaker.StopTone();
             }
         }
 

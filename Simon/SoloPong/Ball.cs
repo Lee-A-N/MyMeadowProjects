@@ -187,6 +187,7 @@
             catch (Exception ex)
             {
                 MeadowApp.DebugWriteLine($"Exception in MoveTimer_Elapsed: {ex.ToString()}");
+                this.isMoveComplete = true;
             }
         }
 
