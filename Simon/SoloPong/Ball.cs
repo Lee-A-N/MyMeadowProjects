@@ -1,13 +1,9 @@
 ﻿namespace SoloPong
 {
     using System;
-    using System.ComponentModel;
-    using System.Drawing.Design;
-    using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Timers;
     using Meadow.Foundation;
-    using Meadow.Foundation.Graphics;
 
     public class Ball
     {
@@ -46,16 +42,16 @@
         private readonly Random random = new Random();
         private readonly ISounds speaker;
 
+        private readonly int width = 10;
+        private readonly int height = 10;
+        private readonly int displayWidth;
+
+        private readonly Color color = Color.Red;
+
         private int xPosition = 5;
         private int yPosition;
         private int xIncrement;
         private int yIncrement;
-
-        private int width = 10;
-        private int height = 10;
-        private int displayWidth;
-
-        private Color color = Color.Red;
 
         private int score = -1;
 
@@ -138,9 +134,9 @@
 
                         this.xPosition += this.xIncrement;
 
-                        if (this.xPosition > this.maxX)
+                        if (this.xPosition + this.width > this.maxX)
                         {
-                            this.xPosition = maxX;
+                            this.xPosition = maxX - this.width;
                         }
 
                         MeadowApp.DebugWriteLine($"new x = {this.xPosition}");
@@ -154,9 +150,9 @@
 
                         MeadowApp.DebugWriteLine($"new y = {this.yPosition}");
 
-                        if (this.yPosition > this.maxY)
+                        if (this.yPosition + this.height > this.maxY)
                         {
-                            this.yPosition = this.maxY;
+                            this.yPosition = this.maxY - this.height;
                         }
 
                         if (this.yPosition < this.minY)
@@ -191,7 +187,7 @@
             }
         }
 
-        private void changeXIncrement()
+        private void ChangeXIncrement()
         {
             this.xIncrement += this.random.Next(-1, 1);
 
@@ -211,7 +207,7 @@
             }
         }
 
-        private void changeYIncrement()
+        private void ChangeYIncrement()
         {
             this.yIncrement += this.random.Next(-1, 1);
 
@@ -236,18 +232,21 @@
             bool isPaddleMissed = false;
             bool isBorderHit = false;
 
-            MeadowApp.DebugWriteLine($"checkForCollision: {this.xPosition},{this.yPosition}");
+            int ballCenterX = this.xPosition + this.width / 2;
+            int ballCenterY = this.yPosition + this.height / 2;
 
-            if (this.yPosition >= this.maxY)
+            MeadowApp.DebugWriteLine($"checkForCollision: {ballCenterX},{ballCenterY}");
+
+            if (this.yPosition + this.height >= this.maxY)
             {
-                if (this.xPosition >= this.paddle.Left && this.xPosition < this.paddle.Right)
+                if (ballCenterX >= this.paddle.Left && ballCenterX < this.paddle.Right)
                 {
                     this.speaker.PlayPaddleHitSound();
                     ++this.Score;
                     this.yIncrement = -this.yIncrement;
                     this.paddle.Shrink();
-                    this.changeXIncrement();
-                    this.changeYIncrement();
+                    this.ChangeXIncrement();
+                    this.ChangeYIncrement();
                 }
                 else
                 {
@@ -262,12 +261,12 @@
             }
             else
             {
-                if (this.xPosition >= this.maxX || this.xPosition <= 0)
+                if (this.xPosition + this.width >= this.maxX || this.xPosition <= 0)
                 {
                     MeadowApp.DebugWriteLine("x border hit");
                     isBorderHit = true;
                     this.xIncrement = -this.xIncrement;
-                    this.changeYIncrement();
+                    this.ChangeYIncrement();
                 }
 
                 if (this.yPosition <= this.minY)
@@ -275,7 +274,7 @@
                     MeadowApp.DebugWriteLine("y border hit");
                     isBorderHit = true;
                     this.yIncrement = -this.yIncrement;
-                    this.changeXIncrement();
+                    this.ChangeXIncrement();
                 }
 
                 if (isBorderHit)
