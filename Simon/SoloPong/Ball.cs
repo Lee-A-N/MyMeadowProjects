@@ -192,9 +192,10 @@
             }
         }
 
-        private void ChangeXIncrement()
+        private void ChangeXIncrement(int extraX)
         {
             this.xIncrement += this.random.Next(-1, 1);
+            this.xIncrement += extraX;
 
             if (this.xIncrement < 0)
             {
@@ -212,9 +213,9 @@
             }
         }
 
-        private void ChangeYIncrement()
+        private void ChangeYIncrement(int extraY)
         {
-            this.yIncrement += this.random.Next(-1, 1);
+            this.yIncrement += this.random.Next(-1, 1) + extraY;
 
             if (this.yIncrement < 0)
             {
@@ -232,6 +233,50 @@
             }
         }
 
+        private void GetVelocityChangeAdjustments(int ballCenterX, out int extraX, out int extraY)
+        {
+            float oneThirdPaddleWidth = this.paddle.Width / 3;
+
+            if (xIncrement > 0)
+            {
+                // traveling right
+                if (ballCenterX < this.paddle.Left + oneThirdPaddleWidth)
+                {
+                    extraX = -2;    // a bit less horizontal velocity
+                    extraY = -2;    // a bit more vertical velocity
+                }
+                else if (ballCenterX > this.paddle.Left + oneThirdPaddleWidth * 2)
+                {
+                    extraX = 2;    // a bit more horizontal velocity
+                    extraY = 2;    // a bit less vertical velocity
+                }
+                else
+                {
+                    extraX = 0;
+                    extraY = 0;
+                }
+            }
+            else
+            {
+                //traveling left
+                if (ballCenterX < this.paddle.Left + oneThirdPaddleWidth)
+                {
+                    extraX = -2;   // a bit more horizontal velocity
+                    extraY = 2;    // a bit less vertical velocity
+                }
+                else if (ballCenterX > this.paddle.Left + oneThirdPaddleWidth * 2)
+                {
+                    extraX = 2;    // a bit less horizontal velocity
+                    extraY = -2;    // a bit more vertical velocity
+                }
+                else
+                {
+                    extraX = 0;
+                    extraY = 0;
+                }
+            }
+        }
+
         private bool checkForCollision()
         {
             bool isPaddleMissed = false;
@@ -245,12 +290,22 @@
             {
                 if (ballCenterX >= this.paddle.Left && ballCenterX < this.paddle.Right)
                 {
+                    // Paddle hit!
                     this.speaker.PlayPaddleHitSound();
                     ++this.Score;
+
+                    int extraX;
+                    int extraY;
+                    this.GetVelocityChangeAdjustments(ballCenterX, out extraX, out extraY);
+
                     this.yIncrement = -this.yIncrement;
+
+                    // Apply the x and y increments
+                    this.ChangeXIncrement(extraX);
+                    this.ChangeYIncrement(extraY);
+
+                    // Make the paddle smaller
                     this.paddle.Shrink();
-                    this.ChangeXIncrement();
-                    this.ChangeYIncrement();
                 }
                 else
                 {
@@ -270,7 +325,7 @@
                     MeadowApp.DebugWriteLine("x border hit");
                     isBorderHit = true;
                     this.xIncrement = -this.xIncrement;
-                    this.ChangeYIncrement();
+                    this.ChangeYIncrement(0);
                 }
 
                 if (this.yPosition <= this.minY)
@@ -278,7 +333,7 @@
                     MeadowApp.DebugWriteLine("y border hit");
                     isBorderHit = true;
                     this.yIncrement = -this.yIncrement;
-                    this.ChangeXIncrement();
+                    this.ChangeXIncrement(0);
                 }
 
                 if (isBorderHit)
