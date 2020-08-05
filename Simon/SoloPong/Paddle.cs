@@ -117,7 +117,7 @@
 
         public void Shrink()
         {
-            if (this.width > this.displayWidth / 24)
+            if (this.width > this.displayWidth / 15)
             {
                 int oldRight = this.Right;
                 this.width -= Paddle.SHRINK_AMOUNT;

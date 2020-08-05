@@ -96,8 +96,13 @@
             this.xPosition = this.random.Next(5, this.displayWidth - 5 - this.width);
             this.yPosition = this.minY + 5;
 
-            this.xIncrement = 7;
-            this.yIncrement = 13;
+            int xDirectionRandom = this.random.Next(0, 1);
+            int directionMultiplier = xDirectionRandom > 0 ? -1 : 1;
+
+            int incrementRandom = this.random.Next(6, 10);
+
+            this.xIncrement = incrementRandom * directionMultiplier;
+            this.yIncrement = 20 - incrementRandom;
 
             // draw the ball in the starting position
             this.Draw(this.xPosition, this.yPosition, this.color);
