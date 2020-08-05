@@ -28,7 +28,10 @@
 
         public void ShowDirect()
         {
-            this.graphics.Show();
+            lock (this.LockObject)
+            {
+                this.graphics.Show();
+            }
         }
 
         public void DrawText(string text, int x, int y, Color color)
@@ -38,26 +41,17 @@
 
         public void DrawLine(int x0, int y0, int x1, int y1, Color color)
         {
-            lock (graphics)
-            {
-                this.graphics.DrawLine(x0, y0, x1, y1, color);
-            }
+            this.graphics.DrawLine(x0, y0, x1, y1, color);
         }
 
         public void DrawRectangle(int x0, int y0, int width, int height, Color color)
         {
-            lock (graphics)
-            {
-                this.graphics.DrawRectangle(x0, y0, width, height, color, true);
-            }
+            this.graphics.DrawRectangle(x0, y0, width, height, color, true);
         }
 
         public void DrawCircle(int x, int y, int radius, Color color)
         {
-            lock (graphics)
-            {
-                this.graphics.DrawCircle(x, y, radius, color, true);
-            }
+            this.graphics.DrawCircle(x, y, radius, color, true);
         }
 
         public void Start()
@@ -74,15 +68,15 @@
         {
             while (true)
             {
-                if (this.updateDisplay)
+                lock (this.LockObject)
                 {
-                    lock (this.graphics)
+                    if (this.updateDisplay)
                     {
                         this.graphics.Show();
                     }
                 }
 
-                Thread.Sleep(50);
+                Thread.Sleep(93);
             }
         }
     }

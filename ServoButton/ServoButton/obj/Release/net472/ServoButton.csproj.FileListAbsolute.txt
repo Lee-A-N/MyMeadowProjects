@@ -1,0 +1,16 @@
+C:\Users\lnayes\Documents\Meadow Projects\ServoButton\ServoButton\bin\Release\net472\App.exe.config
+C:\Users\lnayes\Documents\Meadow Projects\ServoButton\ServoButton\bin\Release\net472\App.exe
+C:\Users\lnayes\Documents\Meadow Projects\ServoButton\ServoButton\bin\Release\net472\App.pdb
+C:\Users\lnayes\Documents\Meadow Projects\ServoButton\ServoButton\bin\Release\net472\Meadow.dll
+C:\Users\lnayes\Documents\Meadow Projects\ServoButton\ServoButton\bin\Release\net472\Meadow.Foundation.dll
+C:\Users\lnayes\Documents\Meadow Projects\ServoButton\ServoButton\bin\Release\net472\Servo.dll
+C:\Users\lnayes\Documents\Meadow Projects\ServoButton\ServoButton\bin\Release\net472\System.Core.dll
+C:\Users\lnayes\Documents\Meadow Projects\ServoButton\ServoButton\bin\Release\net472\System.dll
+C:\Users\lnayes\Documents\Meadow Projects\ServoButton\ServoButton\bin\Release\net472\mscorlib.dll
+C:\Users\lnayes\Documents\Meadow Projects\ServoButton\ServoButton\obj\Release\net472\ServoButton.csprojAssemblyReference.cache
+C:\Users\lnayes\Documents\Meadow Projects\ServoButton\ServoButton\obj\Release\net472\ServoButton.AssemblyInfoInputs.cache
+C:\Users\lnayes\Documents\Meadow Projects\ServoButton\ServoButton\obj\Release\net472\ServoButton.AssemblyInfo.cs
+C:\Users\lnayes\Documents\Meadow Projects\ServoButton\ServoButton\obj\Release\net472\ServoButton.csproj.CoreCompileInputs.cache
+C:\Users\lnayes\Documents\Meadow Projects\ServoButton\ServoButton\obj\Release\net472\ServoButton.csproj.CopyComplete
+C:\Users\lnayes\Documents\Meadow Projects\ServoButton\ServoButton\obj\Release\net472\App.exe
+C:\Users\lnayes\Documents\Meadow Projects\ServoButton\ServoButton\obj\Release\net472\App.pdb

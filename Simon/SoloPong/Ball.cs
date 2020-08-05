@@ -2,6 +2,7 @@
 {
     using System;
     using System.ComponentModel;
+    using System.Drawing.Design;
     using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Timers;
@@ -116,60 +117,125 @@
             this.moveTimer.Stop();
         }
 
+        private bool isMoveComplete = true;
+
         private void MoveTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (!this.checkForCollision())
+            try
             {
-                int oldX = this.xPosition;
-                int oldY = this.yPosition;
+                MeadowApp.DebugWriteLine("Move timer elapsed");
 
-                this.xPosition += xIncrement;
-
-                if (this.xPosition > this.maxX)
+                if (this.isMoveComplete)
                 {
-                    this.xPosition = maxX;
+                    this.isMoveComplete = false;
+
+                    if (!this.checkForCollision())
+                    {
+                        int oldX = this.xPosition;
+                        int oldY = this.yPosition;
+
+                        MeadowApp.DebugWriteLine($"Move timer elapsed: {oldX},{oldY} {xIncrement},{yIncrement}");
+
+                        this.xPosition += this.xIncrement;
+
+                        if (this.xPosition > this.maxX)
+                        {
+                            this.xPosition = maxX;
+                        }
+
+                        MeadowApp.DebugWriteLine($"new x = {this.xPosition}");
+
+                        if (this.xPosition < 0)
+                        {
+                            this.xPosition = 0;
+                        }
+
+                        this.yPosition += yIncrement;
+
+                        MeadowApp.DebugWriteLine($"new y = {this.yPosition}");
+
+                        if (this.yPosition > this.maxY)
+                        {
+                            this.yPosition = this.maxY;
+                        }
+
+                        if (this.yPosition < this.minY)
+                        {
+                            this.yPosition = this.minY;
+                        }
+
+                        MeadowApp.DebugWriteLine($"new x,y = {this.xPosition},{this.yPosition}");
+
+                        if (!(this.xPosition == oldX && this.yPosition == oldY))
+                        {
+                            lock (this.asyncGraphics.LockObject)
+                            {
+                                if (this.moveTimer.Enabled)
+                                {
+                                    this.Draw(oldX, oldY, this.backgroundColor);
+                                    this.Draw(this.xPosition, this.yPosition, this.color);
+                                }
+                            }
+                        }
+                    }
+
+                    this.isMoveComplete = true;
                 }
 
-                if (this.xPosition < 0)
+                MeadowApp.DebugWriteLine("leaving move timer elapsed");
+            }
+            catch (Exception ex)
+            {
+                MeadowApp.DebugWriteLine($"Exception in MoveTimer_Elapsed: {ex.ToString()}");
+            }
+        }
+
+        private void changeXIncrement()
+        {
+            this.xIncrement += this.random.Next(-1, 1);
+
+            if (this.xIncrement < 0)
+            {
+                if (this.xIncrement > -7)
                 {
-                    this.xPosition = 0;
+                    this.xIncrement = -7;
                 }
-
-                this.yPosition += yIncrement;
-
-                if (this.yPosition > this.maxY)
+            }
+            else
+            {
+                if (this.xIncrement < 7)
                 {
-                    this.yPosition = this.maxY;
+                    this.xIncrement = 7;
                 }
+            }
+        }
 
-                if (this.yPosition < this.minY)
+        private void changeYIncrement()
+        {
+            this.yIncrement += this.random.Next(-1, 1);
+
+            if (this.yIncrement < 0)
+            {
+                if (this.yIncrement > -7)
                 {
-                    this.yPosition = this.minY;
+                    this.yIncrement = -7;
                 }
-
-                lock (this.asyncGraphics.LockObject)
+            }
+            else
+            {
+                if (this.yIncrement < 7)
                 {
-                    this.Draw(oldX, oldY, this.backgroundColor);
-                    this.Draw(this.xPosition, this.yPosition, this.color);
+                    this.yIncrement = 7;
                 }
             }
         }
 
         private bool checkForCollision()
         {
-            bool isCollisionDetected = false;
+            bool isPaddleMissed = false;
+            bool isBorderHit = false;
 
-            if (this.xPosition >= this.maxX || this.xPosition <= 0)
-            {
-                this.speaker.PlayBorderHitSound();
-                this.xIncrement = -this.xIncrement;
-            }
-
-            if (this.yPosition <= this.minY)
-            {
-                this.speaker.PlayBorderHitSound();
-                this.yIncrement = -this.yIncrement;
-            }
+            MeadowApp.DebugWriteLine($"checkForCollision: {this.xPosition},{this.yPosition}");
 
             if (this.yPosition >= this.maxY)
             {
@@ -179,6 +245,8 @@
                     ++this.Score;
                     this.yIncrement = -this.yIncrement;
                     this.paddle.Shrink();
+                    this.changeXIncrement();
+                    this.changeYIncrement();
                 }
                 else
                 {
@@ -188,11 +256,35 @@
                     this.speaker.PlayGameOverSound();
                     this.Explode();
 
-                    isCollisionDetected = true;
+                    isPaddleMissed = true;
+                }
+            }
+            else
+            {
+                if (this.xPosition >= this.maxX || this.xPosition <= 0)
+                {
+                    MeadowApp.DebugWriteLine("x border hit");
+                    isBorderHit = true;
+                    this.xIncrement = -this.xIncrement;
+                    this.changeYIncrement();
+                }
+
+                if (this.yPosition <= this.minY)
+                {
+                    MeadowApp.DebugWriteLine("y border hit");
+                    isBorderHit = true;
+                    this.yIncrement = -this.yIncrement;
+                    this.changeXIncrement();
+                }
+
+                if (isBorderHit)
+                {
+                    this.speaker.PlayBorderHitSound();
                 }
             }
 
-            return isCollisionDetected;
+            MeadowApp.DebugWriteLine($"leaving checkForCollision: {isPaddleMissed}");
+            return isPaddleMissed;
         }
 
         private void Explode()

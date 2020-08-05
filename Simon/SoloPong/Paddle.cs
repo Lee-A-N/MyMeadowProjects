@@ -92,8 +92,8 @@
                 {
                     lock (this.asyncGraphics.LockObject)
                     {
-                        this.Draw(right, right + delta, this.backgroundColor);
                         this.Draw(oldPosition, newPosition, this.paddleColor);
+                        this.Draw(right, right + delta, this.backgroundColor);
                     }
                 }
                 else

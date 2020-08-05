@@ -24,53 +24,51 @@
             Normal
         }
 
-        private St7789 st7789;
+        private const int KNOB_ROTATION_DEBOUNCE_INTERVAL = 100;
 
-        public GraphicsLibrary graphics;
-        private AsyncGraphics asyncGraphics;
+        private readonly St7789 st7789;
 
-        private RotaryEncoderWithButton rotaryPaddle;
-        private System.Timers.Timer paddleClickDebounceTimer = new System.Timers.Timer(500);
-        private bool isPaddleClickDebounceActive = false;
+        private readonly GraphicsLibrary graphics;
+        private readonly AsyncGraphics asyncGraphics;
 
-        private PiezoSpeaker speaker;
-        private IPwmPort speakerPWM;
+        private readonly RotaryEncoderWithButton rotaryPaddle;
 
-        private IDigitalInputPort volumeIn1;
-        private IDigitalInputPort volumeIn2;
+        private readonly PiezoSpeaker speaker;
+        private readonly IPwmPort speakerPWM;
 
-        private int displayWidth;
-        private int displayHeight;
-        private Color backgroundColor;
+        private readonly IDigitalInputPort volumeIn1;
+        private readonly IDigitalInputPort volumeIn2;
 
-        private System.Timers.Timer debounceTimer = new System.Timers.Timer(500);
+        private readonly int displayWidth;
+        private readonly int displayHeight;
+        private readonly Color backgroundColor;
+
+        private readonly System.Timers.Timer debounceTimer = new System.Timers.Timer(MeadowApp.KNOB_ROTATION_DEBOUNCE_INTERVAL);
+        private readonly Paddle paddle;
+        private readonly Ball ball;
+        private readonly Banner instructionBanner;
+        private readonly Banner scoreBanner;
+
         private bool isDebounceActive = false;
 
         int directionCounter = 0;
-
-        private Paddle paddle;
-        private Ball ball;
-        private Banner instructionBanner;
-        private Banner scoreBanner;
+        private int rotaryPaddleClickCount = 0;
 
         public MeadowApp()
         {
-            Console.WriteLine("Initializing...");
+            MeadowApp.DebugWriteLine("Initializing...");
 
             var config = new SpiClockConfiguration(6000, SpiClockConfiguration.Mode.Mode3);
 
-            this.rotaryPaddle = new RotaryEncoderWithButton(Device, Device.Pins.D10, Device.Pins.D09, Device.Pins.D08);
+            this.rotaryPaddle = new RotaryEncoderWithButton(Device, Device.Pins.D10, Device.Pins.D09, Device.Pins.D08, debounceDuration: 100);
             this.rotaryPaddle.Rotated += RotaryPaddle_Rotated;
-            this.rotaryPaddle.Clicked += RotaryPaddle_Clicked;
-
-            this.paddleClickDebounceTimer.AutoReset = false;
-            this.paddleClickDebounceTimer.Elapsed += PaddleClickDebounceTimer_Elapsed;
 
             this.volumeIn1 = Device.CreateDigitalInputPort(Device.Pins.D03);
             this.volumeIn2 = Device.CreateDigitalInputPort(Device.Pins.D04);
 
-            this.speakerPWM = Device.CreatePwmPort(Device.Pins.D07, dutyCycle: this.SoundDutyCycle);
+            this.speakerPWM = Device.CreatePwmPort(Device.Pins.D07, frequency: 5, dutyCycle: this.SoundDutyCycle);
             this.speaker = new PiezoSpeaker(speakerPWM);
+            this.PlayInaudibleSound();
 
             this.st7789 = new St7789(
                 device: Device,
@@ -97,37 +95,50 @@
 
             this.scoreBanner = new Banner(this.displayWidth, this.asyncGraphics, fontHeight: 16, this.backgroundColor, color: Color.Yellow, top: 0);
             this.scoreBanner.Text = Banner.SCORE_TEXT;
-            this.instructionBanner = new Banner(this.displayWidth, this.asyncGraphics, fontHeight: 16, this.backgroundColor, color: Color.White, top: Banner.HEIGHT);
-            this.LoadScreen(eraseInstructionBanner: false, instructionBannerText: Banner.START_TEXT, showScoreBanner: false);
+            this.instructionBanner = new Banner(
+                displayWidth: this.displayWidth, 
+                graphics: this.asyncGraphics, 
+                fontHeight: 16, 
+                backgroundColor: this.backgroundColor, 
+                color: Color.White, 
+                top: Banner.HEIGHT * 2);
+            this.ShowInstructionBanner(Banner.START_TEXT);
 
             this.paddle = new Paddle(this.asyncGraphics, this.displayWidth, this.displayWidth, this.backgroundColor);
             this.ball = new Ball(this.asyncGraphics, this.displayWidth, this.displayHeight, this.backgroundColor, this.paddle, this, minimumY: Banner.HEIGHT + 1);
             this.ball.ExplosionOccurred += this.OnExplosionOccurred;
             this.ball.ScoreChanged += this.scoreBanner.OnScoreChanged;
+
+            this.rotaryPaddle.Clicked += RotaryPaddle_Clicked;
+            this.PlayBootSound();
         }
 
-        private void PaddleClickDebounceTimer_Elapsed(object sender, ElapsedEventArgs e)
+        public static void DebugWriteLine(string s)
         {
-            this.isPaddleClickDebounceActive = false;
+            //Console.WriteLine(s);
         }
 
         private void RotaryPaddle_Clicked(object sender, EventArgs e)
         {
-            if (!this.isPaddleClickDebounceActive)
+            ++this.rotaryPaddleClickCount;
+
+            if (this.rotaryPaddleClickCount <= 1)
             {
-                Console.WriteLine("Processing knob click");
-                this.paddleClickDebounceTimer.Start();
-                this.isPaddleClickDebounceActive = true;
+                this.PlayStartSound();
+                MeadowApp.DebugWriteLine("Processing knob click");
+                this.graphics.Clear(true);
                 this.asyncGraphics.Stop();
                 this.ball.StopMoving();
                 this.LoadScreen(eraseInstructionBanner : true, string.Empty, showScoreBanner: true);
                 this.paddle.Reset();
                 this.ball.Reset();
-                this.PlayStartSound();
                 this.ball.Score = 0;
+                this.PlayStartSound();
                 this.ball.StartMoving();
                 this.asyncGraphics.Start();
             }
+
+            this.rotaryPaddleClickCount = 0;
         }
 
         public void ShowInstructionBanner(string text)
@@ -197,7 +208,7 @@
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"RotaryPaddle_Rotated exception: {ex}");
+                MeadowApp.DebugWriteLine($"RotaryPaddle_Rotated exception: {ex}");
             }
         }
 
@@ -210,10 +221,7 @@
         {
             new Thread(() =>
             {
-                lock (this.speaker)
-                {
-                    this.PlaySound(1500, 30);
-                }
+                this.PlaySound(1500, 30);
             }).Start();
         }
 
@@ -221,10 +229,7 @@
         {
             new Thread(() =>
             {
-                lock (this.speaker)
-                {
-                    this.PlaySound(750, 30);
-                }
+                    this.PlaySound(1400, 30);
             }).Start();
         }
 
@@ -232,10 +237,7 @@
         {
             new Thread(() =>
             {
-                lock (this.speaker)
-                {
                     this.PlaySound(50, 500);
-                }
             }).Start();
         }
 
@@ -244,8 +246,16 @@
             new Thread(() =>
             {
                 this.PlaySound(2000, 2);
-                Thread.Sleep(300);
+                Thread.Sleep(10);
                 this.PlaySound(2000, 2);
+            }).Start();
+        }
+
+        public void PlayInaudibleSound()
+        {
+            new Thread(() =>
+            {
+                this.PlaySound(1.1f, 1);
             }).Start();
         }
 
@@ -253,7 +263,7 @@
         {
             new Thread(() =>
             {
-                this.PlaySound(4000, 2);
+                this.PlaySound(1000, 1);
             }).Start();
         }
 
@@ -302,7 +312,7 @@
                     return 0;
 
                 case SoundMode.Soft:
-                    return 1;
+                    return normalDuration == 0 ? 0 : 1;
 
                 default:
                     return normalDuration;
@@ -316,6 +326,7 @@
             if (this.SoundDutyCycle > 0)
             {
                 this.speaker.PlayTone(frequency, this.GetSoundDuration(duration));
+                this.speaker.StopTone();
             }
         }
 
