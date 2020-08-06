@@ -21,7 +21,6 @@
 
         private readonly St7789 st7789;
 
-        private readonly GraphicsLibrary graphics;
         private readonly AsyncGraphics asyncGraphics;
 
         private readonly RotaryEncoderWithButton rotaryPaddle;
@@ -73,12 +72,11 @@
             this.displayWidth = Convert.ToInt32(this.st7789.Width);
             this.displayHeight = Convert.ToInt32(this.st7789.Height);
 
-            this.graphics = new GraphicsLibrary(this.st7789)
+            GraphicsLibrary graphics = new GraphicsLibrary(this.st7789)
             {
                 Rotation = GraphicsLibrary.RotationType._270Degrees
             };
-            this.graphics.Clear(updateDisplay: true);
-            this.asyncGraphics = new AsyncGraphics(this.graphics);
+            this.asyncGraphics = new AsyncGraphics(graphics);
 
             this.debounceTimer.AutoReset = false;
             this.debounceTimer.Elapsed += DebounceTimer_Elapsed;
@@ -134,9 +132,9 @@
             {
                 soundGenerator.PlayStartSound();
                 MeadowApp.DebugWriteLine("Processing knob click");
-                this.graphics.Clear(true);
                 this.asyncGraphics.Stop();
                 this.ball.StopMoving();
+                this.asyncGraphics.Clear();
                 this.LoadScreen(eraseInstructionBanner : true, string.Empty, showScoreBanner: true);
                 this.paddle.Reset();
                 this.ball.Reset();
@@ -158,13 +156,12 @@
 
         private void LoadScreen(bool eraseInstructionBanner, string instructionBannerText, bool showScoreBanner)
         {
-            this.graphics.DrawRectangle(
-                xLeft: 0, 
-                yTop: 0,
+            this.asyncGraphics.DrawRectangle(
+                left: 0, 
+                top: 0,
                 width: this.displayWidth,
                 height: this.displayHeight, 
-                color: this.backgroundColor, 
-                filled: true);
+                color: this.backgroundColor);
 
             if (eraseInstructionBanner)
             {

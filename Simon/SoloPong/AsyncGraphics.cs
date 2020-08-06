@@ -14,6 +14,8 @@
         {
             this.graphics = graphicsLibrary;
 
+            this.Clear();
+
             this.graphics.Stroke = Paddle.HEIGHT;
             this.graphics.CurrentFont = new Font12x16();
 
@@ -44,9 +46,9 @@
             this.graphics.DrawLine(x0, y0, x1, y1, color);
         }
 
-        public void DrawRectangle(int x0, int y0, int width, int height, Color color)
+        public void DrawRectangle(int left, int top, int width, int height, Color color)
         {
-            this.graphics.DrawRectangle(x0, y0, width, height, color, true);
+            this.graphics.DrawRectangle(left, top, width, height, color, filled: true);
         }
 
         public void DrawCircle(int x, int y, int radius, Color color)
@@ -62,6 +64,11 @@
         public void Stop()
         {
             this.updateDisplay = false;
+        }
+
+        public void Clear()
+        {
+            this.graphics.Clear(updateDisplay: true);
         }
 
         private void ShowLoop()

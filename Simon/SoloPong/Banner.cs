@@ -36,8 +36,8 @@
         public void Draw()
         {
             this.asyncGraphics.DrawRectangle(
-                x0: 0,
-                y0: this.top,
+                left: 0,
+                top: this.top,
                 width: this.width,
                 height: this.Height,
                 color: this.color);
@@ -49,8 +49,8 @@
         public void Hide()
         {
             this.asyncGraphics.DrawRectangle(
-                x0: 0,
-                y0: this.top,
+                left: 0,
+                top: this.top,
                 width: this.width,
                 height: this.Height,
                 color: this.backgroundColor);

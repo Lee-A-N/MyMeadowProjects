@@ -20,7 +20,7 @@
         private readonly System.Timers.Timer moveTimer = new System.Timers.Timer(Ball.MOVE_INTERVAL);
         private readonly Paddle paddle;
         private readonly Random random = new Random();
-        private readonly ISounds speaker;
+        private readonly ISounds soundGenerator;
         private readonly ScoreKeeper scoreKeeper;
 
         private readonly Color backgroundColor;
@@ -49,7 +49,7 @@
             ScoreKeeper scoreKeeper)
         {
             this.asyncGraphics = asyncGraphics;
-            this.speaker = soundGenerator;
+            this.soundGenerator = soundGenerator;
 
             this.scoreKeeper = scoreKeeper;
 
@@ -266,7 +266,7 @@
                 if (ballCenterX >= this.paddle.Left && ballCenterX < this.paddle.Right)
                 {
                     // Paddle hit!
-                    this.speaker.PlayPaddleHitSound();
+                    this.soundGenerator.PlayPaddleHitSound();
                     this.scoreKeeper.Increment();
 
                     this.GetVelocityChangeAdjustments(ballCenterX, out int extraX, out int extraY);
@@ -285,7 +285,7 @@
                     // Missed the paddle.  Time to explode...
                     this.asyncGraphics.Stop();
                     this.StopMoving();
-                    this.speaker.PlayGameOverSound();
+                    this.soundGenerator.PlayGameOverSound();
                     this.Explode();
 
                     isPaddleMissed = true;
@@ -311,7 +311,7 @@
 
                 if (isBorderHit)
                 {
-                    this.speaker.PlayBorderHitSound();
+                    this.soundGenerator.PlayBorderHitSound();
                 }
             }
 
