@@ -1,97 +1,82 @@
-﻿namespace SoloPong
+﻿//-----------------------------------------------------------------------
+// <copyright file="SoundGenerator.cs" company="Logikos, Inc">
+//     Copyright (c) Lee Nayes, Logikos, Inc. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+namespace SoloPong
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using System.Threading;
-    using Meadow.Devices;
-    using Meadow.Foundation;
     using Meadow.Foundation.Audio;
-    using Meadow.Foundation.Displays.Tft;
-    using Meadow.Foundation.Graphics;
-    using Meadow.Foundation.Sensors.Rotary;
     using Meadow.Hardware;
-    using Meadow.Peripherals.Sensors.Rotary;
 
+    /// <summary>
+    /// Class used for generating sound effects
+    /// </summary>
     public class SoundGenerator : ISounds
     {
-        private enum SoundMode
-        {
-            Silent,
-            Soft,
-            Normal
-        }
-
+        /// <summary>
+        /// Object representing the speaker hardware
+        /// </summary>
         private readonly PiezoSpeaker speaker;
 
+        /// <summary>
+        /// Object representing the speaker's PWM port
+        /// </summary>
         private readonly IPwmPort speakerPWM;
 
+        /// <summary>
+        /// First of two digital inputs ports used for reading the current sound level setting.
+        /// </summary>
         private readonly IDigitalInputPort volumeIn1;
+
+        /// <summary>
+        /// Second of two digital inputs ports used for reading the current sound level setting.
+        /// </summary>
         private readonly IDigitalInputPort volumeIn2;
 
+        /// <summary>
+        /// Initializes a new instance of the SoundGenerator class
+        /// </summary>
+        /// <param name="inputPort1">First sound-level input port</param>
+        /// <param name="inputPort2">Second sound-level input port</param>
+        /// <param name="pwmPort">PWM port used to drive the speaker</param>
         public SoundGenerator(IDigitalInputPort inputPort1, IDigitalInputPort inputPort2, IPwmPort pwmPort)
         {
             this.volumeIn1 = inputPort1;
             this.volumeIn2 = inputPort2;
             this.speakerPWM = pwmPort;
 
-            this.speaker = new PiezoSpeaker(speakerPWM);
+            this.speaker = new PiezoSpeaker(this.speakerPWM);
 
             this.PlayInitialSound();
         }
 
-        public void PlayBorderHitSound()
+        /// <summary>
+        /// Enumeration of sound-level settings
+        /// </summary>
+        private enum SoundMode
         {
-            this.PlaySound(1500, 10);
+            /// <summary>
+            /// No sound effects
+            /// </summary>
+            Silent,
+
+            /// <summary>
+            /// Low-volume sound effects
+            /// </summary>
+            Soft,
+
+            /// <summary>
+            /// Normal-volume sound effects
+            /// </summary>
+            Normal
         }
 
-        public void PlayPaddleHitSound()
-        {
-            this.PlaySound(1300, 10);
-        }
-
-        public void PlayGameOverSound()
-        {
-            try
-            {
-                // A thread is needed to get the sound to play
-                new Thread(() =>
-                {
-                    this.PlaySound(50, 500);
-                }).Start();
-            }
-            catch (Exception)
-            {
-                // Sometimes thread creation fails. Make sure it doesn't crash the game.
-                MeadowApp.DebugWriteLine($"Exception in PlayGameOverSound");
-            }
-        }
-
-        public void PlayStartSound()
-        {
-            this.PlaySound(2000, 2);
-            Thread.Sleep(10);
-            this.PlaySound(2000, 2);
-        }
-
-        public void PlayInitialSound()
-        {
-            new Thread(() =>
-            {
-                this.PlaySound(1.1f, 1);
-            }).Start();
-        }
-
-        public void PlayConstructionCompleteSound()
-        {
-            new Thread(() =>
-            {
-                this.PlaySound(1200, 1);
-                this.PlaySound(1200, 1);
-            }).Start();
-        }
-
+        /// <summary>
+        /// Gets the current sound level setting by reading the slide-switch state.
+        /// </summary>
         private SoundMode SoundLevel
         {
             get
@@ -111,6 +96,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the duty-cycle of the PWM signal based on the sound level setting.
+        /// </summary>
         private int SoundDutyCycle
         {
             get
@@ -129,6 +117,80 @@
             }
         }
 
+        /// <summary>
+        /// Play the left, right, or top border-hit sound effect.
+        /// </summary>
+        public void PlayBorderHitSound()
+        {
+            this.PlaySound(1500, 10);
+        }
+
+        /// <summary>
+        /// Play the paddle-hit sound effect
+        /// </summary>
+        public void PlayPaddleHitSound()
+        {
+            this.PlaySound(1300, 10);
+        }
+
+        /// <summary>
+        /// Play the game-over sound effect
+        /// </summary>
+        public void PlayGameOverSound()
+        {
+            try
+            {
+                // A thread is needed to get the sound to play
+                new Thread(() =>
+                {
+                    this.PlaySound(50, 500);
+                }).Start();
+            }
+            catch (Exception)
+            {
+                // Sometimes thread creation fails. Make sure it doesn't crash the game.
+                MeadowApp.DebugWriteLine($"Exception in PlayGameOverSound");
+            }
+        }
+
+        /// <summary>
+        /// Play the start-up sound effect
+        /// </summary>
+        public void PlayStartSound()
+        {
+            this.PlaySound(2000, 2);
+            Thread.Sleep(10);
+            this.PlaySound(2000, 2);
+        }
+
+        /// <summary>
+        /// Play the initial sound effect
+        /// </summary>
+        public void PlayInitialSound()
+        {
+            new Thread(() =>
+            {
+                this.PlaySound(1.1f, 1);
+            }).Start();
+        }
+
+        /// <summary>
+        /// Play the construction-completed sound effect
+        /// </summary>
+        public void PlayConstructionCompleteSound()
+        {
+            new Thread(() =>
+            {
+                this.PlaySound(1200, 1);
+                this.PlaySound(1200, 1);
+            }).Start();
+        }
+
+        /// <summary>
+        /// Gets the sound duration based on the sound level setting
+        /// </summary>
+        /// <param name="normalDuration">Sound duration if the sound level is set to normal</param>
+        /// <returns>Sound duration to use</returns>
         private int GetSoundDuration(int normalDuration)
         {
             switch (this.SoundLevel)
@@ -143,7 +205,12 @@
                     return normalDuration;
             }
         }
-
+        
+        /// <summary>
+        /// Play a sound-effect
+        /// </summary>
+        /// <param name="frequency">Sound-effect frequency</param>
+        /// <param name="duration">Sound-effect duration</param>
         private void PlaySound(float frequency, int duration)
         {
             this.speakerPWM.DutyCycle = this.SoundDutyCycle;

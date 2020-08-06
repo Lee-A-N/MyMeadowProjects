@@ -1,18 +1,39 @@
-﻿using Meadow;
-using System.Threading;
+﻿//-----------------------------------------------------------------------
+// <copyright file="Program.cs" company="Logikos, Inc">
+//     Copyright (c) Lee Nayes, Logikos, Inc. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
 
 namespace SoloPong
 {
-    class Program
+    using System.Threading;
+    using Meadow;
+
+    /// <summary>
+    /// Program class for the Solo Pong game
+    /// </summary>
+    public class Program
     {
-        static IApp app;
+        /// <summary>
+        /// Gets or sets the application interface
+        /// </summary>
+        public static IApp App { get; set; }
+
+        /// <summary>
+        /// Function called when the app is started
+        /// </summary>
+        /// <param name="args">Start-up arguments</param>
         public static void Main(string[] args)
         {
-            if (args.Length > 0 && args[0] == "--exitOnDebug") return;
+            if (args.Length > 0 && args[0] == "--exitOnDebug")
+            {
+                return;
+            }
 
             // instantiate and run new meadow app
-            app = new MeadowApp();
+            Program.App = new MeadowApp();
 
+            // Keep the application running
             Thread.Sleep(Timeout.Infinite);
         }
     }
