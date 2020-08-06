@@ -15,15 +15,8 @@
     using Meadow.Hardware;
     using Meadow.Peripherals.Sensors.Rotary;
 
-    public class MeadowApp : App<F7Micro, MeadowApp>, ISounds
+    public class MeadowApp : App<F7Micro, MeadowApp>
     {
-        private enum SoundMode
-        {
-            Silent,
-            Soft,
-            Normal
-        }
-
         private const int KNOB_ROTATION_DEBOUNCE_INTERVAL = 100;
 
         private readonly St7789 st7789;
@@ -33,17 +26,14 @@
 
         private readonly RotaryEncoderWithButton rotaryPaddle;
 
-        private readonly PiezoSpeaker speaker;
-        private readonly IPwmPort speakerPWM;
-
-        private readonly IDigitalInputPort volumeIn1;
-        private readonly IDigitalInputPort volumeIn2;
+        private readonly ISounds soundGenerator;
 
         private readonly int displayWidth;
         private readonly int displayHeight;
         private readonly Color backgroundColor;
 
         private readonly System.Timers.Timer debounceTimer = new System.Timers.Timer(MeadowApp.KNOB_ROTATION_DEBOUNCE_INTERVAL);
+
         private readonly Paddle paddle;
         private readonly Ball ball;
         private readonly Banner instructionBanner;
@@ -58,17 +48,15 @@
         {
             MeadowApp.DebugWriteLine("Initializing...");
 
+            this.soundGenerator = new SoundGenerator(
+                Device.CreateDigitalInputPort(Device.Pins.D03),
+                Device.CreateDigitalInputPort(Device.Pins.D04),
+                Device.CreatePwmPort(Device.Pins.D07));
+
             var config = new SpiClockConfiguration(6000, SpiClockConfiguration.Mode.Mode3);
 
             this.rotaryPaddle = new RotaryEncoderWithButton(Device, Device.Pins.D10, Device.Pins.D09, Device.Pins.D08, debounceDuration: 100);
             this.rotaryPaddle.Rotated += RotaryPaddle_Rotated;
-
-            this.volumeIn1 = Device.CreateDigitalInputPort(Device.Pins.D03);
-            this.volumeIn2 = Device.CreateDigitalInputPort(Device.Pins.D04);
-
-            this.speakerPWM = Device.CreatePwmPort(Device.Pins.D07, frequency: 5, dutyCycle: this.SoundDutyCycle);
-            this.speaker = new PiezoSpeaker(speakerPWM);
-            this.PlayInitialSound();
 
             this.st7789 = new St7789(
                 device: Device,
@@ -99,6 +87,7 @@
             {
                 Text = Banner.SCORE_TEXT
             };
+
             this.instructionBanner = new Banner(
                 displayWidth: this.displayWidth, 
                 graphics: this.asyncGraphics, 
@@ -109,12 +98,20 @@
             this.ShowInstructionBanner(Banner.START_TEXT);
 
             this.paddle = new Paddle(this.asyncGraphics, this.displayWidth, this.displayWidth, this.backgroundColor);
-            this.ball = new Ball(this.asyncGraphics, this.displayWidth, this.displayHeight, this.backgroundColor, this.paddle, this, minimumY: Banner.HEIGHT + 1);
+            this.ball = new Ball(
+                asyncGraphics: this.asyncGraphics, 
+                displayWidth: this.displayWidth, 
+                displayHeight: this.displayHeight, 
+                backgroundColor: this.backgroundColor, 
+                paddle: this.paddle, 
+                soundGenerator: this.soundGenerator, 
+                minimumY: Banner.HEIGHT + 1);
             this.ball.ExplosionOccurred += this.OnExplosionOccurred;
             this.ball.ScoreChanged += this.scoreBanner.OnScoreChanged;
 
             this.rotaryPaddle.Clicked += RotaryPaddle_Clicked;
-            this.PlayConstructionCompleteSound();
+
+            this.soundGenerator.PlayConstructionCompleteSound();
         }
 
         public static void DebugWriteLine(string s)
@@ -128,7 +125,7 @@
 
             if (this.rotaryPaddleClickCount <= 1)
             {
-                this.PlayStartSound();
+                soundGenerator.PlayStartSound();
                 MeadowApp.DebugWriteLine("Processing knob click");
                 this.graphics.Clear(true);
                 this.asyncGraphics.Stop();
@@ -137,7 +134,7 @@
                 this.paddle.Reset();
                 this.ball.Reset();
                 this.ball.Score = 0;
-                this.PlayStartSound();
+                soundGenerator.PlayStartSound();
                 this.ball.StartMoving();
                 this.asyncGraphics.Start();
             }
@@ -219,119 +216,6 @@
         private void DebounceTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             this.isDebounceActive = false;
-        }
-
-        void ISounds.PlayBorderHitSound()
-        {
-            this.PlaySound(1500, 10);
-        }
-
-        void ISounds.PlayPaddleHitSound()
-        {
-            this.PlaySound(1300, 10);
-        }
-
-        void ISounds.PlayGameOverSound()
-        {
-            try
-            {
-                // A thread is needed to get the sound to play
-                new Thread(() =>
-                {
-                    this.PlaySound(50, 500);
-                }).Start();
-            }
-            catch (Exception)
-            {
-                // Sometimes thread creation fails. Make sure it doesn't crash the game.
-                MeadowApp.DebugWriteLine($"Exception in PlayGameOverSound");
-            }
-        }
-
-        public void PlayStartSound()
-        {
-            this.PlaySound(2000, 2);
-            Thread.Sleep(10);
-            this.PlaySound(2000, 2);
-        }
-
-        public void PlayInitialSound()
-        {
-            new Thread(() =>
-            {
-                this.PlaySound(1.1f, 1);
-            }).Start();
-        }
-
-        public void PlayConstructionCompleteSound()
-        {
-            new Thread(() =>
-            {
-                this.PlaySound(1200, 1);
-                this.PlaySound(1200, 1);
-            }).Start();
-        }
-
-        private SoundMode SoundLevel
-        {
-            get
-            {
-                if (this.volumeIn1.State == true)
-                {
-                    return SoundMode.Normal;
-                }
-                else if (this.volumeIn2.State == true)
-                {
-                    return SoundMode.Silent;
-                }
-                else
-                {
-                    return SoundMode.Soft;
-                }
-            }
-        }
-
-        private int SoundDutyCycle
-        {
-            get
-            {
-                switch (this.SoundLevel)
-                {
-                    case SoundMode.Silent:
-                        return 0;
-
-                    case SoundMode.Soft:
-                        return 1;
-
-                    default:
-                        return 20;
-                }
-            }
-        }
-
-        private int GetSoundDuration(int normalDuration)
-        {
-            switch (this.SoundLevel)
-            {
-                case SoundMode.Silent:
-                    return 0;
-
-                case SoundMode.Soft:
-                    return normalDuration == 0 ? 0 : 1;
-
-                default:
-                    return normalDuration;
-            }
-        }
-
-        private void PlaySound(float frequency, int duration)
-        {
-            this.speakerPWM.DutyCycle = this.SoundDutyCycle;
-
-            if (this.SoundDutyCycle > 0)
-            {
-                this.speaker.PlayTone(frequency, this.GetSoundDuration(duration));
-            }
         }
 
         private void OnExplosionOccurred(object sender, Ball.GameOverArgs args)

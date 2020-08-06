@@ -9,5 +9,7 @@
         void PlayGameOverSound();
 
         void PlayStartSound();
+
+        void PlayConstructionCompleteSound();
     }
 }
