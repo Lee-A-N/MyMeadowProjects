@@ -11,37 +11,22 @@
         {
         }
 
-        public class ScoreChangedArgs : EventArgs
-        {
-            public ScoreChangedArgs(int oldScore, int newScore)
-            {
-                this.OldScore = oldScore;
-                this.Score = newScore;
-            }
-
-            public int OldScore { get; set; }
-
-            public int Score { get; set; }
-        }
-
-        public delegate void NotifyScoreChanged(object sender, ScoreChangedArgs args);
-        public event NotifyScoreChanged ScoreChanged;
-
         public delegate void NotifyGameOver(object sender, GameOverArgs args);
         public event NotifyGameOver ExplosionOccurred;
 
         private const int MOVE_INTERVAL = 200;
 
-        private readonly Color backgroundColor;
-        private readonly int maxX;
-        private readonly int maxY;
-        private readonly int minY;
         private readonly AsyncGraphics asyncGraphics;
         private readonly System.Timers.Timer moveTimer = new System.Timers.Timer(Ball.MOVE_INTERVAL);
         private readonly Paddle paddle;
         private readonly Random random = new Random();
         private readonly ISounds speaker;
+        private readonly ScoreKeeper scoreKeeper;
 
+        private readonly Color backgroundColor;
+        private readonly int maxX;
+        private readonly int maxY;
+        private readonly int minY;
         private readonly int width = 10;
         private readonly int height = 10;
         private readonly int displayWidth;
@@ -53,12 +38,20 @@
         private int xIncrement;
         private int yIncrement;
 
-        private int score = -1;
-
-        public Ball(AsyncGraphics asyncGraphics, int displayWidth, int displayHeight, Color backgroundColor, Paddle paddle, ISounds soundGenerator, int minimumY)
+        public Ball(
+            AsyncGraphics asyncGraphics, 
+            int displayWidth, 
+            int displayHeight, 
+            Color backgroundColor, 
+            Paddle paddle, 
+            ISounds soundGenerator, 
+            int minimumY,
+            ScoreKeeper scoreKeeper)
         {
             this.asyncGraphics = asyncGraphics;
             this.speaker = soundGenerator;
+
+            this.scoreKeeper = scoreKeeper;
 
             this.backgroundColor = backgroundColor;
             this.paddle = paddle;
@@ -71,24 +64,6 @@
  
             this.moveTimer.AutoReset = true;
             this.moveTimer.Elapsed += MoveTimer_Elapsed;
-        }
-
-        public int Score
-        {
-            get
-            {
-                return this.score;
-            }
-
-            set
-            {
-                if (this.score != value)
-                {
-                    int oldScore = this.score;
-                    this.score = value;
-                    this.ScoreChanged?.Invoke(this, new ScoreChangedArgs(oldScore, this.score));
-                }
-            }
         }
 
         public void Reset()
@@ -292,7 +267,7 @@
                 {
                     // Paddle hit!
                     this.speaker.PlayPaddleHitSound();
-                    ++this.Score;
+                    this.scoreKeeper.Increment();
 
                     this.GetVelocityChangeAdjustments(ballCenterX, out int extraX, out int extraY);
 

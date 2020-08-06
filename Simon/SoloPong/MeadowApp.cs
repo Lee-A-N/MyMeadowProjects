@@ -34,6 +34,8 @@
 
         private readonly System.Timers.Timer debounceTimer = new System.Timers.Timer(MeadowApp.KNOB_ROTATION_DEBOUNCE_INTERVAL);
 
+        private readonly ScoreKeeper scoreKeeper;
+
         private readonly Paddle paddle;
         private readonly Ball ball;
         private readonly Banner instructionBanner;
@@ -98,6 +100,10 @@
             this.ShowInstructionBanner(Banner.START_TEXT);
 
             this.paddle = new Paddle(this.asyncGraphics, this.displayWidth, this.displayWidth, this.backgroundColor);
+
+            this.scoreKeeper = new ScoreKeeper();
+            this.scoreKeeper.ScoreChanged += this.scoreBanner.OnScoreChanged;
+
             this.ball = new Ball(
                 asyncGraphics: this.asyncGraphics, 
                 displayWidth: this.displayWidth, 
@@ -105,9 +111,10 @@
                 backgroundColor: this.backgroundColor, 
                 paddle: this.paddle, 
                 soundGenerator: this.soundGenerator, 
-                minimumY: Banner.HEIGHT + 1);
+                minimumY: Banner.HEIGHT + 1,
+                scoreKeeper: this.scoreKeeper);
+
             this.ball.ExplosionOccurred += this.OnExplosionOccurred;
-            this.ball.ScoreChanged += this.scoreBanner.OnScoreChanged;
 
             this.rotaryPaddle.Clicked += RotaryPaddle_Clicked;
 
@@ -133,8 +140,8 @@
                 this.LoadScreen(eraseInstructionBanner : true, string.Empty, showScoreBanner: true);
                 this.paddle.Reset();
                 this.ball.Reset();
-                this.ball.Score = 0;
-                soundGenerator.PlayStartSound();
+                this.scoreKeeper.Reset();
+                this.soundGenerator.PlayStartSound();
                 this.ball.StartMoving();
                 this.asyncGraphics.Start();
             }

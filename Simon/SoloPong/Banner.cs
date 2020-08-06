@@ -56,7 +56,7 @@
                 color: this.backgroundColor);
         }
 
-        public void OnScoreChanged(object sender, Ball.ScoreChangedArgs args)
+        public void OnScoreChanged(object sender, ScoreKeeper.ScoreChangedArgs args)
         {
             int y = this.top + (this.Height - this.FontHeight) / 2;
 
